@@ -6,6 +6,8 @@
 #include <QMainWindow>
 #include <QTableWidgetItem>
 #include "interfaces.h"
+#include "capture.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -22,6 +24,7 @@ public:
     void Loop();
 private:
     Interfaces _interface;
+    Capture _capture;
     Ui::MainWindow *ui;
     QStandardItemModel tv;
 };

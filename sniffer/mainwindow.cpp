@@ -8,12 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    for (std::list<std::string>::const_iterator it = _interface.GetInterfaces().begin();
-         it != _interface.GetInterfaces().end(); ++it)
-        ui->comboBoxInterfaces->addItem(QString::fromStdString(*it));
-
-    this->AddRow();
 }
 
 MainWindow::~MainWindow()
@@ -41,6 +35,13 @@ QTableWidgetItem* MainWindow::NewItem(const QString str)
 
 void MainWindow::Loop()
 {
+    for (std::list<std::string>::const_iterator it = _interface.GetInterfaces().begin();
+         it != _interface.GetInterfaces().end(); ++it)
+        ui->comboBoxInterfaces->addItem(QString::fromStdString(*it));
 
+    this->AddRow();
+    std::cout << "test" << std::endl;
+    _capture.SetNetworkInterface("wlan0");
+    _capture.start();
 
 }
