@@ -60,10 +60,11 @@ bool Capture::InitRawSocket()
 
 void Capture::run()
 {
-    char buffer[20148];
+    char buffer[2048];
     struct sockaddr_ll packetInfo;
     socklen_t packetInfoSize = sizeof(packetInfo);
     int len;
+    MyPacket *packet;
 
     if (InitRawSocket() != true)
     {
@@ -74,11 +75,37 @@ void Capture::run()
     std::cout << "### packet content ###" << std::endl;
     while (1) /*faudra mettre un bool pour pouvoir sortir de la boucle quand on quitte le program ou qu'on change d'interface reseau.*/
     {
+        memset(buffer, 0, 2048);
         len = recvfrom(_rawSocket, buffer, 2048, 0, (struct sockaddr*)&packetInfo, &packetInfoSize);
         /*pour analyser le packet ya des infos dans la structure "packetinfo" et le buffer*/
         /*le but est d'alimenter une fifo de pcappacket (structure pcap)*/
         /*Et ensuite d'afficher le contenu dans l'ihm*/
+        packet = new MyPacket(packetInfo, buffer);
+        AddPacketToList(packet);
     if (len > 0)
-        std::cout << "size : " << len << " :: "<< buffer << std::endl;
+        std::cout << "size : " << len << " :: "
+                  << " :: Protocol : " << IP.getProtocolName(packetInfo.sll_hatype)
+                  << " :: Buffer :" << buffer << std::endl;
     }
+}
+
+void Capture::AddPacketToList(MyPacket* packet)
+{
+    _mutex.lock();
+    _packetList.push(*packet);
+    _mutex.unlock();
+}
+
+const MyPacket & Capture::GetTopPacketList()
+{
+    _mutex.lock();
+    MyPacket const & packet = _packetList.front();
+    _packetList.pop();
+    _mutex.unlock();
+    return (packet);
+}
+
+bool Capture::isListEmpty()
+{
+    return (_packetList.empty());
 }

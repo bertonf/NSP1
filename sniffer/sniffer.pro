@@ -15,10 +15,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     interfaces.cpp \
-    capture.cpp
+    capture.cpp \
+    internetprotocol.cpp \
+    mypacket.cpp \
+    middleware.cpp
 
 HEADERS  += mainwindow.h \
     interfaces.h \
-    capture.h
+    capture.h \
+    internetprotocol.h \
+    mypacket.h \
+    middleware.h
 
 FORMS    += mainwindow.ui

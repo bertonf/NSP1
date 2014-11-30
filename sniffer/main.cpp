@@ -1,12 +1,12 @@
 #include "mainwindow.h"
 #include <QApplication>
+#include "middleware.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    w.Loop();
-
+    Middleware middleware;
+    middleware.ShowWindow();
+    middleware.start();
     return a.exec();
 }

@@ -5,8 +5,9 @@
 #include <QStandardItemModel>
 #include <QMainWindow>
 #include <QTableWidgetItem>
-#include "interfaces.h"
-#include "capture.h"
+#include <QThread>
+#include "mypacket.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -19,14 +20,15 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void AddRow();
+    void InitInterfaces(const std::list<std::string>& );
+    void AddRow(MyPacket const & packet);
     QTableWidgetItem* NewItem(QString);
-    void Loop();
+    const Ui::MainWindow & getUI();
 private:
-    Interfaces _interface;
-    Capture _capture;
     Ui::MainWindow *ui;
     QStandardItemModel tv;
+    //Middleware *_mw;
+
 };
 
 #endif // MAINWINDOW_H

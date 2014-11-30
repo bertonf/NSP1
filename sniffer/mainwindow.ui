@@ -27,7 +27,10 @@
      <bool>true</bool>
     </property>
     <attribute name="horizontalHeaderVisible">
-     <bool>true</bool>
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
     </attribute>
     <column>
      <property name="text">
@@ -89,7 +92,7 @@
      <x>0</x>
      <y>0</y>
      <width>1075</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
