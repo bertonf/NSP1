@@ -7,9 +7,12 @@
 
 class InternetProtocol
 {
-    std::map<unsigned char, std::string> _protocolNumbers;
+    std::map<unsigned char, std::string> _protocolNumbersv4;
+    std::map<unsigned char, std::string> _protocolNumbersv6;
 public:
     InternetProtocol();
+    void initProtoIPV4();
+    void initProtoIPV6();
     std::string getProtocolName(unsigned char protocolNumber);
 };
 
