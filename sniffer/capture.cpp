@@ -50,7 +50,7 @@ bool Capture::InitRawSocket()
     sll.sll_ifindex = ifr.ifr_ifindex;
     sll.sll_protocol = htons(ETH_P_ALL);
 
-    if (bind(_rawSocket, (struct sockaddr *)&sll, sizeof(sll)) == -1)
+    if (bind(_rawSocket, reinterpret_cast<struct sockaddr *>(&sll), sizeof(sll)) == -1)
     {
         std::cerr << "Error : bind()." << std::endl;
         return (false);
@@ -60,7 +60,7 @@ bool Capture::InitRawSocket()
 
 void Capture::run()
 {
-    char buffer[2048];
+    unsigned char *buffer;
     struct sockaddr_ll packetInfo;
     socklen_t packetInfoSize = sizeof(packetInfo);
     int len;
@@ -75,20 +75,23 @@ void Capture::run()
     std::cout << "### packet content ###" << std::endl;
     while (1) /*faudra mettre un bool pour pouvoir sortir de la boucle quand on quitte le program ou qu'on change d'interface reseau.*/
     {
+        buffer = reinterpret_cast<unsigned char*>(malloc(2048));
         memset(buffer, 0, 2048);
-        len = recvfrom(_rawSocket, buffer, 2048, 0, (struct sockaddr*)&packetInfo, &packetInfoSize);
+        len = recvfrom(_rawSocket, buffer, 2048, 0, reinterpret_cast<struct sockaddr*>(&packetInfo), &packetInfoSize);
         /*pour analyser le packet ya des infos dans la structure "packetinfo" et le buffer*/
         /*le but est d'alimenter une fifo de pcappacket (structure pcap)*/
         /*Et ensuite d'afficher le contenu dans l'ihm*/
+
         packet = new MyPacket(packetInfo, buffer);
-        AddPacketToList(packet);
+        emit AddPacketToList(packet);
     if (len > 0)
         std::cout << "size : " << len << " :: "
-                  << " :: Protocol : " << IP.getProtocolName(packetInfo.sll_hatype)
+                  << "Packet Info sll_addr = " << packetInfo.sll_addr
+                  << " :: Protocol [" << static_cast<int>(packet->getIpHeader()->protocol) << "] : " << IP.getProtocolName(packet->getIpHeader()->protocol)
                   << " :: Buffer :" << buffer << std::endl;
     }
 }
-
+/*
 void Capture::AddPacketToList(MyPacket* packet)
 {
     _mutex.lock();
@@ -108,4 +111,4 @@ const MyPacket & Capture::GetTopPacketList()
 bool Capture::isListEmpty()
 {
     return (_packetList.empty());
-}
+}*/

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <QObject>
 #include <QThread>
 #include <QMutex>
 #include "internetprotocol.h"
@@ -11,6 +12,8 @@
 
 class Capture : public QThread
 {
+    Q_OBJECT
+
 private :
     int _rawSocket;
     std::string _networkInterface;
@@ -22,9 +25,11 @@ public:
     Capture();
     void SetNetworkInterface(std::string);
     void run();
-    void AddPacketToList(MyPacket *);
-    const MyPacket & GetTopPacketList();
-    bool isListEmpty();
+    //void AddPacketToList(MyPacket *);
+    /*const MyPacket & GetTopPacketList();
+    bool isListEmpty();*/
+signals:
+    void AddPacketToList(MyPacket*);
 };
 
 #endif // CAPTURE_H

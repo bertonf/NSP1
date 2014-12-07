@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>1075</width>
-    <height>611</height>
+    <height>808</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Network Security Project 1</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTableWidget" name="tableWidget">
@@ -36,30 +39,28 @@
      <property name="text">
       <string>N°</string>
      </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>New Column</string>
+     <property name="textAlignment">
+      <set>AlignRight|AlignVCenter</set>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>New Column</string>
+      <string>Source</string>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>New Column</string>
+      <string>Destination</string>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>New Column</string>
+      <string>Protocol</string>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>New Column</string>
+      <string>Info</string>
      </property>
     </column>
    </widget>
@@ -82,6 +83,24 @@
      </item>
      <item>
       <widget class="QComboBox" name="comboBoxInterfaces"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>560</y>
+      <width>1041</width>
+      <height>194</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QTableWidget" name="tableWidget_2"/>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="tableWidget_3"/>
      </item>
     </layout>
    </widget>

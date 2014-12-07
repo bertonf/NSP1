@@ -17,14 +17,12 @@ SOURCES += main.cpp\
     interfaces.cpp \
     capture.cpp \
     internetprotocol.cpp \
-    mypacket.cpp \
-    middleware.cpp
+    mypacket.cpp
 
 HEADERS  += mainwindow.h \
     interfaces.h \
     capture.h \
     internetprotocol.h \
-    mypacket.h \
-    middleware.h
+    mypacket.h
 
 FORMS    += mainwindow.ui

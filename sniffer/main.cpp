@@ -5,8 +5,11 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Middleware middleware;
+    MainWindow _mainWindow;
+    _mainWindow.show();
+    /*Middleware middleware;
     middleware.ShowWindow();
-    middleware.start();
+    middleware.start();*/
+
     return a.exec();
 }
