@@ -5,9 +5,9 @@
 #include <string>
 #include <map>
 
-class EthernetProtocol : public EthernetProtocol
+class EthernetProtocol
 {
-    std::map<unsigned char, std::string> _protocolEther;
+    std::map<unsigned int, std::string> _protocolEther;
 
 public:
     EthernetProtocol();
