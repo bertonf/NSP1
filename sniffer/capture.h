@@ -15,15 +15,19 @@ class Capture : public QThread
     Q_OBJECT
 
 private :
-    int _rawSocket;
+    bool        _captureOn;
+    QMutex      _captureMutex;
+    int         _rawSocket;
     std::string _networkInterface;
-     InternetProtocol IP;
+    InternetProtocol IP;
     std::queue<MyPacket> _packetList;
-    QMutex _mutex;
     bool InitRawSocket();
+    void CloseRawSocket();
 public:
     Capture();
-    void SetNetworkInterface(std::string);
+    void SetNetworkInterface(const std::string &);
+    const bool & getCaptureOn() const;
+    void setCaptureOn(const bool &);
     void run();
     //void AddPacketToList(MyPacket *);
     /*const MyPacket & GetTopPacketList();

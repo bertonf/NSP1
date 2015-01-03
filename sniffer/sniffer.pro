@@ -17,12 +17,14 @@ SOURCES += main.cpp\
     interfaces.cpp \
     capture.cpp \
     internetprotocol.cpp \
-    mypacket.cpp
+    mypacket.cpp \
+    ethernetprotocol.cpp
 
 HEADERS  += mainwindow.h \
     interfaces.h \
     capture.h \
     internetprotocol.h \
-    mypacket.h
+    mypacket.h \
+    ethernetprotocol.h
 
 FORMS    += mainwindow.ui

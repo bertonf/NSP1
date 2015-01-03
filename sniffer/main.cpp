@@ -1,15 +1,24 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include "middleware.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow _mainWindow;
-    _mainWindow.show();
-    /*Middleware middleware;
-    middleware.ShowWindow();
-    middleware.start();*/
+    int ret = 0;
+    try
+    {
+        QApplication a(argc, argv);
+        MainWindow _mainWindow;
+        _mainWindow.showMaximized();
+        /*Middleware middleware;
+        middleware.ShowWindow();
+        middleware.start();*/
 
-    return a.exec();
+        ret = a.exec();
+    }
+    catch (std::exception ex)
+    {
+        std::cerr << "ERROR INCONNU : " << ex.what() << std::endl;
+    }
+
+    return (ret);
 }

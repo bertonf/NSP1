@@ -1,16 +1,30 @@
 #include "mypacket.h"
 
+MyPacket::MyPacket(unsigned char *packet)
+{
+    _buffer = packet;
+    _ethhdr = reinterpret_cast<struct ethhdr*>(packet);
+}
+
 MyPacket::MyPacket(struct sockaddr_ll packetInfo, unsigned char *buffer)
 {
     _packetInfo = packetInfo;
     _buffer = buffer;
     _ethhdr = reinterpret_cast<struct ethhdr*>(buffer);
+
+
+
+
     _iphdr = reinterpret_cast<struct iphdr*>(buffer + sizeof(struct ethhdr));
     if (_iphdr->version == 6)
         _iphdr6 = reinterpret_cast<struct ip6_hdr*>(buffer + sizeof(struct ethhdr));
     else
         _iphdr6 = NULL;
+}
 
+MyPacket::~MyPacket()
+{
+    delete _buffer;
 }
 
 struct sockaddr_ll const & MyPacket::getPacketInfo() const
@@ -30,16 +44,10 @@ const struct ethhdr * MyPacket::getEthHeader() const
 
 const struct iphdr * MyPacket::getIpHeader() const
 {
-    if (_iphdr != NULL)
-        return (_iphdr);
-    else
-        return (NULL);
+    return (_iphdr);
 }
 
 const struct ip6_hdr * MyPacket::getIpHeader6() const
 {
-    if (_iphdr6 != NULL)
-        return (_iphdr6);
-    else
-        return (NULL);
+    return (_iphdr6);
 }

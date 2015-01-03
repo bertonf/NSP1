@@ -1,3 +1,5 @@
+#include <ostream>
+#include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
 #include <sys/socket.h>
@@ -14,12 +16,26 @@ Capture::Capture()
 {
     _networkInterface = "";
     _rawSocket = -1;
+    _captureOn = false;
 }
 
-void Capture::SetNetworkInterface(std::string networkInterface)
+void Capture::SetNetworkInterface(const std::string &networkInterface)
 {
     _networkInterface = networkInterface;
 }
+
+const bool & Capture::getCaptureOn() const
+{
+    return (_captureOn);
+}
+
+void Capture::setCaptureOn(const bool &b)
+{
+    _captureMutex.lock();
+    _captureOn = b;
+    _captureMutex.unlock();
+}
+
 
 bool Capture::InitRawSocket()
 {
@@ -58,6 +74,11 @@ bool Capture::InitRawSocket()
     return (true);
 }
 
+void Capture::CloseRawSocket()
+{
+    close(_rawSocket);
+}
+
 void Capture::run()
 {
     unsigned char *buffer;
@@ -66,49 +87,35 @@ void Capture::run()
     int len;
     MyPacket *packet;
 
-    if (InitRawSocket() != true)
+    try
     {
-        std::cerr << "Error : Raw socket init failed." << std::endl;
-        return;
+        if (InitRawSocket() != true)
+        {
+            std::cerr << "Error : Raw socket init failed." << std::endl;
+            return;
+        }
+        setCaptureOn(true);
+        std::cout << "Init done" << std::endl;
+        while (getCaptureOn())
+        {
+            //buffer = reinterpret_cast<unsigned char*>(malloc(2048));
+            buffer = new unsigned char[2048];
+            memset(buffer, 0, 2048);
+            len = recvfrom(_rawSocket, buffer, 2048, 0, reinterpret_cast<struct sockaddr*>(&packetInfo), &packetInfoSize);
+            if (len > 0)
+            {
+                packet = new MyPacket(packetInfo, buffer);
+                emit AddPacketToList(packet);
+            }
+        }
+        CloseRawSocket();
+        std::cout << "END CAPTURE" << std::endl;
     }
-    std::cout << "Init done" << std::endl;
-    std::cout << "### packet content ###" << std::endl;
-    while (1) /*faudra mettre un bool pour pouvoir sortir de la boucle quand on quitte le program ou qu'on change d'interface reseau.*/
+    catch(std::exception ex)
     {
-        buffer = reinterpret_cast<unsigned char*>(malloc(2048));
-        memset(buffer, 0, 2048);
-        len = recvfrom(_rawSocket, buffer, 2048, 0, reinterpret_cast<struct sockaddr*>(&packetInfo), &packetInfoSize);
-        /*pour analyser le packet ya des infos dans la structure "packetinfo" et le buffer*/
-        /*le but est d'alimenter une fifo de pcappacket (structure pcap)*/
-        /*Et ensuite d'afficher le contenu dans l'ihm*/
-
-        packet = new MyPacket(packetInfo, buffer);
-        emit AddPacketToList(packet);
-    if (len > 0)
-        std::cout << "size : " << len << " :: "
-                  << "Packet Info sll_addr = " << packetInfo.sll_addr
-                  << " :: Protocol [" << static_cast<int>(packet->getIpHeader()->protocol) << "] : " << IP.getProtocolName(packet->getIpHeader()->protocol)
-                  << " :: Buffer :" << buffer << std::endl;
+        std::cerr << "Erreur durant la capture : " << ex.what() << std::endl;
+        CloseRawSocket();
+        //std::cerr << "Error : Raw socket init failed." << ex.what << std::endl;
     }
 }
-/*
-void Capture::AddPacketToList(MyPacket* packet)
-{
-    _mutex.lock();
-    _packetList.push(*packet);
-    _mutex.unlock();
-}
 
-const MyPacket & Capture::GetTopPacketList()
-{
-    _mutex.lock();
-    MyPacket const & packet = _packetList.front();
-    _packetList.pop();
-    _mutex.unlock();
-    return (packet);
-}
-
-bool Capture::isListEmpty()
-{
-    return (_packetList.empty());
-}*/

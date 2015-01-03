@@ -1,3 +1,4 @@
+#include <iostream>
 #include "ethernetprotocol.h"
 
 EthernetProtocol::EthernetProtocol()
@@ -55,10 +56,10 @@ void EthernetProtocol::InitEtherProt()
 
 std::string EthernetProtocol::getProtocolName(unsigned int protocolNumber)
 {
-    if (_protocolEther.find(protocolNumber) == _protocolEther.end())
+    if (_protocolEther.find(protocolNumber>>16) == _protocolEther.end())
     {
-        std::cout<<"num ethernet protocol inconnu " << protocolNumber << std::endl;
-        return ("Unknown : " + protocolNumber);
+        //std::cout<<"num ethernet protocol inconnu " << std::hex << protocolNumber << std::endl;
+        return ("Unknown");
     }
-    return (_protocolEther[protocolNumber]);
+    return (_protocolEther[protocolNumber>>16]);
 }

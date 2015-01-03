@@ -2,16 +2,17 @@
 #define INTERFACES_H
 
 #include <iostream>
-#include <list>
+#include <vector>
 #include <string>
 class Interfaces
 {
 private :
-    std::list<std::string> _interfaces;
+    std::vector<std::string> _interfaces;
     void ParseInterfaceList();
+    void ActiveInterfaceList();
 public:
     Interfaces();
-    const std::list<std::string>& GetInterfaces();
+    const std::vector<std::string>& GetInterfaces();
 };
 
 #endif // INTERFACES_H
