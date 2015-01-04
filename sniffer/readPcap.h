@@ -16,19 +16,6 @@
 class ReadPcap
 {
  private:
-  int i;
-  unsigned int pkt_counter;   // packet counter 
-  unsigned long byte_counter; //total bytes seen in entire trace 
-  unsigned long cur_counter; //counter for current 1-second interval 
-  unsigned long max_volume;  //max value of bytes in one-second interval 
-  unsigned long current_ts; //current timestamp 
-  struct ether_header *eptr;
- 
-  //temporary packet buffers 
-  struct pcap_pkthdr header; // The header that pcap gives us 
-  const u_char *packet; // The actual packet 
-  u_char *ptr; // printing out hardware header info
-  MyPacket *pkt;
 
  public:
   ReadPcap();
