@@ -21,7 +21,7 @@ class Forger
 public:
     Forger();
     struct ethhdr *CreateEthHdr(unsigned long, char *);
-    unsigned char *CreateARP(unsigned long, char, struct ethhdr);
+    unsigned char *CreateARP(unsigned long, char, struct ethhdr*);
 };
 
 #endif // FORGER_H
