@@ -83,12 +83,12 @@ void MainWindow::RowArp(MyPacket * packet, int numRow)
     memcpy(macaddrsrc, packet->getEthHeader()->h_source, 6);
     memcpy(macaddrdest, packet->getEthHeader()->h_dest, 6);
 
-    sprintf(result, "%X-%X-%X-%X-%X-%X",
+    sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
             macaddrsrc[5], macaddrsrc[4], macaddrsrc[3],
             macaddrsrc[2], macaddrsrc[1], macaddrsrc[0]);
     std::string strsrc = result;
     ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(strsrc))); /*SOURCE*/
-    sprintf(result, "%X-%X-%X-%X-%X-%X",
+    sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
             macaddrdest[5], macaddrdest[4], macaddrdest[3],
             macaddrdest[2], macaddrdest[1], macaddrdest[0]);
     std::string strdest = result;
@@ -108,12 +108,12 @@ void MainWindow::RowOther(MyPacket * packet, int numRow)
     memcpy(macaddrsrc, packet->getEthHeader()->h_source, 6);
     memcpy(macaddrdest, packet->getEthHeader()->h_dest, 6);
 
-    sprintf(result, "%X-%X-%X-%X-%X-%X",
+    sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
             macaddrsrc[5], macaddrsrc[4], macaddrsrc[3],
             macaddrsrc[2], macaddrsrc[1], macaddrsrc[0]);
     std::string strsrc = result;
     ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(strsrc))); /*SOURCE*/
-    sprintf(result, "%X-%X-%X-%X-%X-%X",
+    sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
             macaddrdest[5], macaddrdest[4], macaddrdest[3],
             macaddrdest[2], macaddrdest[1], macaddrdest[0]);
     std::string strdest = result;
@@ -180,29 +180,34 @@ void MainWindow::on_tableWidget_currentCellChanged(int currentRow, int currentCo
     (void)currentColumn;
     if (currentRow == previousRow)
         return;
-    std::string buffer;
-    std::ostringstream oss;
+    char hex[20];
+    std::string bufferHex;
+    std::string bufferStr;
+    std::string tmp;
+    std::string tmp2;
     ui->textEditHexa->clear();
     ui->textEditChar->clear();
 
-    buffer = reinterpret_cast<char*>(_packetTab[currentRow]->getBuffer());
-    //oss = std::hex << buffer;
+    MyPacket *packet = _packetTab[currentRow];
 
-    for (size_t i = 0; i < buffer.length();i++)
+    char result[20];
+    memset(result, 0, 20);
+    for (int i = 0; i < packet->getLength(); i++)
     {
-        oss << std::setw(2) << std::hex << std::setw(2) << std::setfill('0') << std::setw(2) << static_cast<int>(buffer[i]);
-        oss << " ";
-        if ((i + 1) % 8 == 0)
-            oss << std::endl;
+        sprintf(hex, "%02X",
+                packet->getBuffer()[i]);
+        tmp = hex;
+        bufferHex += " " + tmp;
+
+        if (packet->getBuffer()[i] >= 33 && packet->getBuffer()[i] >= 126)
+            tmp2 = packet->getBuffer()[i];
+        else
+            tmp2 = ".";
+        bufferStr += " " + tmp2;
     }
-
-    /*sprintf(result, "%X-%X-%X-%X-%X-%X",
-            macaddrsrc[5], macaddrsrc[4], macaddrsrc[3],
-            macaddrsrc[2], macaddrsrc[1], macaddrsrc[0]);
-*/
-
-    ui->textEditHexa->setText(QString::fromStdString(oss.str()));
-    ui->textEditChar->setText(QString::fromStdString(buffer));
+    //std::cout << "DATA = " << buffer << std::endl;
+    ui->textEditHexa->setText(QString::fromStdString(bufferHex));
+    ui->textEditChar->setText(QString::fromStdString(bufferStr));
 }
 
 void MainWindow::on_pushButtonStartStop_clicked()

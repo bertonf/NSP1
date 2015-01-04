@@ -45,6 +45,11 @@ unsigned char * MyPacket::getBuffer() const
     return (_buffer);
 }
 
+int MyPacket::getLength() const
+{
+    return (_length);
+}
+
 const struct ethhdr * MyPacket::getEthHeader() const
 {
     return (_ethhdr);
