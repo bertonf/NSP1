@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void InitInterfaces(const std::vector<std::string>& );
+
 
     QTableWidgetItem* NewItem(QString);
     const Ui::MainWindow & getUI();
@@ -39,9 +39,14 @@ private:
     QStandardItemModel tv;
     InternetProtocol _ipProto;
     EthernetProtocol _ethProto;
-    std::vector<MyPacket> _packetTab;
+    std::vector<MyPacket*> _packetTab;
     Capture _capture;
     Interfaces _interface;
+    void InitInterfaces(const std::vector<std::string>& );
+    void RowIPv4(MyPacket * packet, int numRow);
+    void RowIPv6(MyPacket * packet, int numRow);
+    void RowArp(MyPacket * packet, int numRow);
+    void RowOther(MyPacket * packet, int numRow);
 };
 
 #endif // MAINWINDOW_H

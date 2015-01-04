@@ -104,9 +104,10 @@ void Capture::run()
             len = recvfrom(_rawSocket, buffer, 2048, 0, reinterpret_cast<struct sockaddr*>(&packetInfo), &packetInfoSize);
             if (len > 0)
             {
-                packet = new MyPacket(packetInfo, buffer);
+                packet = new MyPacket(packetInfo, buffer, len);
                 emit AddPacketToList(packet);
             }
+            usleep(100);
         }
         CloseRawSocket();
         std::cout << "END CAPTURE" << std::endl;

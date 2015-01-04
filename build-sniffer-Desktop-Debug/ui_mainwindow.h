@@ -19,9 +19,12 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableWidget>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -30,11 +33,18 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
-    QTableWidget *tableWidget;
-    QWidget *horizontalLayoutWidget;
+    QVBoxLayout *verticalLayout_3;
+    QVBoxLayout *verticalLayout;
     QHBoxLayout *horizontalLayout;
     QLabel *labelInterface;
     QComboBox *comboBoxInterfaces;
+    QPushButton *pushButtonStartStop;
+    QLabel *label;
+    QVBoxLayout *verticalLayout_2;
+    QTableWidget *tableWidget;
+    QHBoxLayout *horizontalLayout_2;
+    QTextEdit *textEditHexa;
+    QTextEdit *textEditChar;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -43,13 +53,61 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
-        MainWindow->resize(1075, 611);
+        MainWindow->setEnabled(true);
+        MainWindow->resize(958, 744);
+        MainWindow->setAutoFillBackground(true);
+        MainWindow->setDockOptions(QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::ForceTabbedDocks);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
+        centralWidget->setEnabled(true);
+        centralWidget->setAutoFillBackground(true);
+        verticalLayout_3 = new QVBoxLayout(centralWidget);
+        verticalLayout_3->setSpacing(6);
+        verticalLayout_3->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
+        verticalLayout = new QVBoxLayout();
+        verticalLayout->setSpacing(6);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setSizeConstraint(QLayout::SetMaximumSize);
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalLayout->setSizeConstraint(QLayout::SetFixedSize);
+        horizontalLayout->setContentsMargins(-1, -1, 100, -1);
+        labelInterface = new QLabel(centralWidget);
+        labelInterface->setObjectName(QStringLiteral("labelInterface"));
+
+        horizontalLayout->addWidget(labelInterface);
+
+        comboBoxInterfaces = new QComboBox(centralWidget);
+        comboBoxInterfaces->setObjectName(QStringLiteral("comboBoxInterfaces"));
+
+        horizontalLayout->addWidget(comboBoxInterfaces);
+
+        pushButtonStartStop = new QPushButton(centralWidget);
+        pushButtonStartStop->setObjectName(QStringLiteral("pushButtonStartStop"));
+        pushButtonStartStop->setMaximumSize(QSize(167, 16777215));
+
+        horizontalLayout->addWidget(pushButtonStartStop);
+
+        label = new QLabel(centralWidget);
+        label->setObjectName(QStringLiteral("label"));
+
+        horizontalLayout->addWidget(label);
+
+        horizontalLayout->setStretch(2, 1);
+        horizontalLayout->setStretch(3, 2);
+
+        verticalLayout->addLayout(horizontalLayout);
+
+        verticalLayout_2 = new QVBoxLayout();
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
         tableWidget = new QTableWidget(centralWidget);
-        if (tableWidget->columnCount() < 6)
-            tableWidget->setColumnCount(6);
+        if (tableWidget->columnCount() < 5)
+            tableWidget->setColumnCount(5);
         QTableWidgetItem *__qtablewidgetitem = new QTableWidgetItem();
+        __qtablewidgetitem->setTextAlignment(Qt::AlignHCenter|Qt::AlignVCenter|Qt::AlignCenter);
         tableWidget->setHorizontalHeaderItem(0, __qtablewidgetitem);
         QTableWidgetItem *__qtablewidgetitem1 = new QTableWidgetItem();
         tableWidget->setHorizontalHeaderItem(1, __qtablewidgetitem1);
@@ -59,35 +117,53 @@ public:
         tableWidget->setHorizontalHeaderItem(3, __qtablewidgetitem3);
         QTableWidgetItem *__qtablewidgetitem4 = new QTableWidgetItem();
         tableWidget->setHorizontalHeaderItem(4, __qtablewidgetitem4);
-        QTableWidgetItem *__qtablewidgetitem5 = new QTableWidgetItem();
-        tableWidget->setHorizontalHeaderItem(5, __qtablewidgetitem5);
         tableWidget->setObjectName(QStringLiteral("tableWidget"));
-        tableWidget->setGeometry(QRect(10, 40, 1051, 491));
-        tableWidget->setAutoFillBackground(true);
+        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(tableWidget->sizePolicy().hasHeightForWidth());
+        tableWidget->setSizePolicy(sizePolicy);
+        tableWidget->setMaximumSize(QSize(4000, 4000));
+        tableWidget->setLayoutDirection(Qt::LeftToRight);
+        tableWidget->setAutoFillBackground(false);
+        tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+        tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+        tableWidget->setWordWrap(false);
         tableWidget->horizontalHeader()->setVisible(true);
+        tableWidget->horizontalHeader()->setCascadingSectionResizes(true);
+        tableWidget->horizontalHeader()->setStretchLastSection(true);
         tableWidget->verticalHeader()->setVisible(false);
-        horizontalLayoutWidget = new QWidget(centralWidget);
-        horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(10, 0, 169, 31));
-        horizontalLayout = new QHBoxLayout(horizontalLayoutWidget);
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setContentsMargins(11, 11, 11, 11);
-        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
-        horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        labelInterface = new QLabel(horizontalLayoutWidget);
-        labelInterface->setObjectName(QStringLiteral("labelInterface"));
+        tableWidget->verticalHeader()->setCascadingSectionResizes(true);
 
-        horizontalLayout->addWidget(labelInterface);
+        verticalLayout_2->addWidget(tableWidget);
 
-        comboBoxInterfaces = new QComboBox(horizontalLayoutWidget);
-        comboBoxInterfaces->setObjectName(QStringLiteral("comboBoxInterfaces"));
 
-        horizontalLayout->addWidget(comboBoxInterfaces);
+        verticalLayout->addLayout(verticalLayout_2);
+
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        horizontalLayout_2->setSizeConstraint(QLayout::SetNoConstraint);
+        textEditHexa = new QTextEdit(centralWidget);
+        textEditHexa->setObjectName(QStringLiteral("textEditHexa"));
+
+        horizontalLayout_2->addWidget(textEditHexa);
+
+        textEditChar = new QTextEdit(centralWidget);
+        textEditChar->setObjectName(QStringLiteral("textEditChar"));
+
+        horizontalLayout_2->addWidget(textEditChar);
+
+
+        verticalLayout->addLayout(horizontalLayout_2);
+
+
+        verticalLayout_3->addLayout(verticalLayout);
 
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1075, 20));
+        menuBar->setGeometry(QRect(0, 0, 958, 20));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -104,19 +180,19 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Network Security Project 1", 0));
+        labelInterface->setText(QApplication::translate("MainWindow", "Interfaces :", 0));
+        pushButtonStartStop->setText(QApplication::translate("MainWindow", "PushButton", 0));
+        label->setText(QApplication::translate("MainWindow", "<html><head/><body><p><br/></p></body></html>", 0));
         QTableWidgetItem *___qtablewidgetitem = tableWidget->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "N\302\260", 0));
         QTableWidgetItem *___qtablewidgetitem1 = tableWidget->horizontalHeaderItem(1);
-        ___qtablewidgetitem1->setText(QApplication::translate("MainWindow", "New Column", 0));
+        ___qtablewidgetitem1->setText(QApplication::translate("MainWindow", "Source", 0));
         QTableWidgetItem *___qtablewidgetitem2 = tableWidget->horizontalHeaderItem(2);
-        ___qtablewidgetitem2->setText(QApplication::translate("MainWindow", "New Column", 0));
+        ___qtablewidgetitem2->setText(QApplication::translate("MainWindow", "Destination", 0));
         QTableWidgetItem *___qtablewidgetitem3 = tableWidget->horizontalHeaderItem(3);
-        ___qtablewidgetitem3->setText(QApplication::translate("MainWindow", "New Column", 0));
+        ___qtablewidgetitem3->setText(QApplication::translate("MainWindow", "Protocol", 0));
         QTableWidgetItem *___qtablewidgetitem4 = tableWidget->horizontalHeaderItem(4);
-        ___qtablewidgetitem4->setText(QApplication::translate("MainWindow", "New Column", 0));
-        QTableWidgetItem *___qtablewidgetitem5 = tableWidget->horizontalHeaderItem(5);
-        ___qtablewidgetitem5->setText(QApplication::translate("MainWindow", "New Column", 0));
-        labelInterface->setText(QApplication::translate("MainWindow", "Interfaces :", 0));
+        ___qtablewidgetitem4->setText(QApplication::translate("MainWindow", "Info", 0));
     } // retranslateUi
 
 };
