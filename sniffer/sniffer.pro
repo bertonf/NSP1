@@ -18,13 +18,15 @@ SOURCES += main.cpp\
     capture.cpp \
     internetprotocol.cpp \
     mypacket.cpp \
-    ethernetprotocol.cpp
+    ethernetprotocol.cpp \
+    forger.cpp
 
 HEADERS  += mainwindow.h \
     interfaces.h \
     capture.h \
     internetprotocol.h \
     mypacket.h \
-    ethernetprotocol.h
+    ethernetprotocol.h \
+    forger.h
 
 FORMS    += mainwindow.ui
