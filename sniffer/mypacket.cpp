@@ -50,22 +50,22 @@ int MyPacket::getLength() const
     return (_length);
 }
 
-const struct ethhdr * MyPacket::getEthHeader() const
+struct ethhdr * MyPacket::getEthHeader() const
 {
     return (_ethhdr);
 }
 
-const struct iphdr * MyPacket::getIpHeader() const
+struct iphdr * MyPacket::getIpHeader() const
 {
     return (_iphdr);
 }
 
-const struct ip6_hdr * MyPacket::getIpHeader6() const
+struct ip6_hdr * MyPacket::getIpHeader6() const
 {
     return (_iphdr6);
 }
 
-const struct arphdr * MyPacket::getArpHeader() const
+struct arphdr *MyPacket::getArpHeader() const
 {
     return (_arphdr);
 }

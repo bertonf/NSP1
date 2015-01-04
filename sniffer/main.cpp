@@ -9,10 +9,6 @@ int main(int argc, char *argv[])
         QApplication a(argc, argv);
         MainWindow _mainWindow;
         _mainWindow.showMaximized();
-        /*Middleware middleware;
-        middleware.ShowWindow();
-        middleware.start();*/
-
         ret = a.exec();
     }
     catch (std::exception ex)

@@ -6,6 +6,8 @@
 #include <stdarg.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <linux/tcp.h>
+#include <linux/udp.h>
 #include <QList>
 #include <QTableWidgetItem>
 #include "mainwindow.h"
@@ -23,11 +25,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&_capture, SIGNAL(AddPacketToList(MyPacket*)),
             this, SLOT(AddRow(MyPacket*)));
-   /* connect(ui->tableWidget, SIGNAL(currentCellChanged(int,int,int,int)),
-            this, SLOT(on_tableWidget_currentCellChanged(int, int, int, int)));*/
-   /* connect(ui->pushButtonStartStop, SIGNAL(clicked()),
-            this, SLOT(on_pushButtonStartStop_clicked()));*/
-
 }
 
 MainWindow::~MainWindow()
@@ -57,6 +54,32 @@ void MainWindow::RowIPv4(MyPacket * packet, int numRow)
                                 _ipProto.getProtocolName(
                                     packet->getIpHeader()->protocol)))); /*PROTOCOL*/
 
+    if (packet->getIpHeader()->protocol == 6) /*TCP*/
+    {
+        struct tcphdr *tcphdr;
+        int portsrc;
+        int portdest;
+        tcphdr = reinterpret_cast<struct tcphdr *>(packet->getIpHeader()) + sizeof(struct iphdr);
+        portsrc = tcphdr->source;
+        portdest = tcphdr->dest;
+
+        QString info = "Port Source = " + QString::number(portsrc) +
+                        " / Port Destination = " + QString::number(portdest);
+        ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
+    }
+    else if (packet->getIpHeader()->protocol == 17) /*UDP*/
+    {
+        struct tcphdr *udphdr;
+        int portsrc;
+        int portdest;
+        udphdr = reinterpret_cast<struct tcphdr *>(packet->getIpHeader()) + sizeof(struct iphdr);
+        portsrc = udphdr->source;
+        portdest = udphdr->dest;
+
+        QString info = "Port Source = " + QString::number(portsrc) +
+                        " / Port Destination = " + QString::number(portdest);
+        ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
+    }
 }
 
 void MainWindow::RowIPv6(MyPacket * packet, int numRow)
@@ -72,6 +95,7 @@ void MainWindow::RowIPv6(MyPacket * packet, int numRow)
     ui->tableWidget->setItem(numRow,3,NewItem(QString::fromStdString(
                                  _ipProto.getProtocolName(
                                      packet->getIpHeader6()->ip6_nxt)))); /*PROTOCOL*/
+
 }
 
 void MainWindow::RowArp(MyPacket * packet, int numRow)
@@ -84,13 +108,13 @@ void MainWindow::RowArp(MyPacket * packet, int numRow)
     memcpy(macaddrdest, packet->getEthHeader()->h_dest, 6);
 
     sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
-            macaddrsrc[5], macaddrsrc[4], macaddrsrc[3],
-            macaddrsrc[2], macaddrsrc[1], macaddrsrc[0]);
+            macaddrsrc[0], macaddrsrc[1], macaddrsrc[2],
+            macaddrsrc[3], macaddrsrc[4], macaddrsrc[5]);
     std::string strsrc = result;
     ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(strsrc))); /*SOURCE*/
     sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
-            macaddrdest[5], macaddrdest[4], macaddrdest[3],
-            macaddrdest[2], macaddrdest[1], macaddrdest[0]);
+            macaddrdest[0], macaddrdest[1], macaddrdest[2],
+            macaddrdest[3], macaddrdest[4], macaddrdest[5]);
     std::string strdest = result;
     ui->tableWidget->setItem(numRow,2,NewItem(QString::fromStdString(strdest))); /*DESTINATION0*/
 
@@ -109,13 +133,13 @@ void MainWindow::RowOther(MyPacket * packet, int numRow)
     memcpy(macaddrdest, packet->getEthHeader()->h_dest, 6);
 
     sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
-            macaddrsrc[5], macaddrsrc[4], macaddrsrc[3],
-            macaddrsrc[2], macaddrsrc[1], macaddrsrc[0]);
+            macaddrsrc[0], macaddrsrc[1], macaddrsrc[2],
+            macaddrsrc[3], macaddrsrc[4], macaddrsrc[5]);
     std::string strsrc = result;
     ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(strsrc))); /*SOURCE*/
     sprintf(result, "%02X-%02X-%02X-%02X-%02X-%02X",
-            macaddrdest[5], macaddrdest[4], macaddrdest[3],
-            macaddrdest[2], macaddrdest[1], macaddrdest[0]);
+            macaddrdest[0], macaddrdest[1], macaddrdest[2],
+            macaddrdest[3], macaddrdest[4], macaddrdest[5]);
     std::string strdest = result;
     ui->tableWidget->setItem(numRow,2,NewItem(QString::fromStdString(strdest))); /*DESTINATION0*/
 
@@ -182,6 +206,7 @@ void MainWindow::on_tableWidget_currentCellChanged(int currentRow, int currentCo
         return;
     char hex[20];
     std::string bufferHex;
+    char str[20];
     std::string bufferStr;
     std::string tmp;
     std::string tmp2;
@@ -200,12 +225,16 @@ void MainWindow::on_tableWidget_currentCellChanged(int currentRow, int currentCo
         bufferHex += " " + tmp;
 
         if (packet->getBuffer()[i] >= 33 && packet->getBuffer()[i] >= 126)
-            tmp2 = packet->getBuffer()[i];
+        {
+            //tmp2 = reinterpret_cast<char*>(packet->getBuffer()[i]);
+            sprintf(str, "%c",
+                packet->getBuffer()[i]);
+            tmp2 = str;
+        }
         else
             tmp2 = ".";
         bufferStr += " " + tmp2;
     }
-    //std::cout << "DATA = " << buffer << std::endl;
     ui->textEditHexa->setText(QString::fromStdString(bufferHex));
     ui->textEditChar->setText(QString::fromStdString(bufferStr));
 }
@@ -217,15 +246,12 @@ void MainWindow::on_pushButtonStartStop_clicked()
     ui->pushButtonStartStop->setEnabled(false);
     if (_capture.getCaptureOn())
     {
-        std::cout << "Click On to Off" << std::endl;
-        ui->pushButtonStartStop->setText("Start Capture");
         _capture.setCaptureOn(false);
         _capture.wait();
         ui->pushButtonStartStop->setText("Start Capture");
     }
     else
     {
-        std::cout << "Click Off to On" << std::endl;
         ui->pushButtonStartStop->setText("Stop Capture");
         interface = _interface.GetInterfaces()[ui->comboBoxInterfaces->currentIndex()];
         _capture.SetNetworkInterface(interface);

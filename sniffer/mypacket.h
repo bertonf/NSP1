@@ -29,10 +29,10 @@ public:
     const sockaddr_ll &getPacketInfo() const;
     unsigned char *getBuffer() const;
     int getLength() const;
-    const struct ethhdr *getEthHeader() const;
-    const struct iphdr *getIpHeader() const;
-    const struct ip6_hdr *getIpHeader6() const;
-    const struct arphdr *getArpHeader() const;
+    struct ethhdr *getEthHeader() const;
+    struct iphdr *getIpHeader() const;
+    struct ip6_hdr *getIpHeader6() const;
+    struct arphdr *getArpHeader() const;
 };
 
 #endif // MYPACKET_H

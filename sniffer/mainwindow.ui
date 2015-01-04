@@ -179,6 +179,23 @@
      <height>20</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuPcap_dump">
+    <property name="title">
+     <string>pcap dump</string>
+    </property>
+    <addaction name="actionOpen_file"/>
+   </widget>
+   <widget class="QMenu" name="menuForging">
+    <property name="title">
+     <string>Forging</string>
+    </property>
+    <addaction name="actionTCP"/>
+    <addaction name="actionUDP"/>
+    <addaction name="actionICMP"/>
+    <addaction name="actionARP"/>
+   </widget>
+   <addaction name="menuPcap_dump"/>
+   <addaction name="menuForging"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -189,6 +206,31 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_file">
+   <property name="text">
+    <string>Open file</string>
+   </property>
+  </action>
+  <action name="actionTCP">
+   <property name="text">
+    <string>TCP</string>
+   </property>
+  </action>
+  <action name="actionUDP">
+   <property name="text">
+    <string>UDP</string>
+   </property>
+  </action>
+  <action name="actionARP">
+   <property name="text">
+    <string>ARP</string>
+   </property>
+  </action>
+  <action name="actionICMP">
+   <property name="text">
+    <string>ICMP</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
