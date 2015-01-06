@@ -15,10 +15,10 @@ CXX           = g++
 DEFINES       = -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I../sniffer -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I. -I.
+INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I../sniffer -I/usr/local/include -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I. -I.
 LINK          = g++
 LFLAGS        = -m64
-LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/usr/X11R6/lib64 -L/home/berton_f/NSP1/sniffer/../../../../usr/local/lib/ -lpcap -lQt5Widgets -L/usr/lib/x86_64-linux-gnu -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /usr/lib/x86_64-linux-gnu/qt5/bin/qmake
@@ -46,22 +46,26 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../sniffer/main.cpp \
-		../sniffer/mainwindow.cpp \
-		../sniffer/interfaces.cpp \
 		../sniffer/capture.cpp \
+		../sniffer/ethernetprotocol.cpp \
+		../sniffer/interfaces.cpp \
 		../sniffer/internetprotocol.cpp \
+		../sniffer/mainwindow.cpp \
 		../sniffer/mypacket.cpp \
-		../sniffer/ethernetprotocol.cpp moc_mainwindow.cpp \
-		moc_capture.cpp
+		../sniffer/readPcap.cpp moc_capture.cpp \
+		moc_mainwindow.cpp \
+		moc_readPcap.cpp
 OBJECTS       = main.o \
-		mainwindow.o \
-		interfaces.o \
 		capture.o \
-		internetprotocol.o \
-		mypacket.o \
 		ethernetprotocol.o \
+		interfaces.o \
+		internetprotocol.o \
+		mainwindow.o \
+		mypacket.o \
+		readPcap.o \
+		moc_capture.o \
 		moc_mainwindow.o \
-		moc_capture.o
+		moc_readPcap.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -153,7 +157,7 @@ first: all
 
 all: Makefile $(TARGET)
 
-$(TARGET): ui_mainwindow.h $(OBJECTS)  
+$(TARGET): /home/berton_f/NSP1/sniffer/../../../../usr/local/lib/libpcap.a ui_mainwindow.h $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 	{ test -n "$(DESTDIR)" && DESTDIR="$(DESTDIR)" || DESTDIR=.; } && test $$(gdb --version | sed -e 's,[^0-9][^0-9]*\([0-9]\)\.\([0-9]\).*,\1\2,;q') -gt 72 && gdb --nx --batch --quiet -ex 'set confirm off' -ex "save gdb-index $$DESTDIR" -ex quit '$(TARGET)' && test -f $(TARGET).gdb-index && objcopy --add-section '.gdb_index=$(TARGET).gdb-index' --set-section-flags '.gdb_index=readonly' '$(TARGET)' '$(TARGET)' && rm -f $(TARGET).gdb-index || true
 
@@ -293,7 +297,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/sniffer1.0.0 || mkdir -p .tmp/sniffer1.0.0
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/sniffer1.0.0/ && $(COPY_FILE) --parents ../sniffer/mainwindow.h ../sniffer/interfaces.h ../sniffer/capture.h ../sniffer/internetprotocol.h ../sniffer/mypacket.h ../sniffer/ethernetprotocol.h .tmp/sniffer1.0.0/ && $(COPY_FILE) --parents ../sniffer/main.cpp ../sniffer/mainwindow.cpp ../sniffer/interfaces.cpp ../sniffer/capture.cpp ../sniffer/internetprotocol.cpp ../sniffer/mypacket.cpp ../sniffer/ethernetprotocol.cpp .tmp/sniffer1.0.0/ && $(COPY_FILE) --parents ../sniffer/mainwindow.ui .tmp/sniffer1.0.0/ && (cd `dirname .tmp/sniffer1.0.0` && $(TAR) sniffer1.0.0.tar sniffer1.0.0 && $(COMPRESS) sniffer1.0.0.tar) && $(MOVE) `dirname .tmp/sniffer1.0.0`/sniffer1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/sniffer1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/sniffer1.0.0/ && $(COPY_FILE) --parents ../sniffer/capture.h ../sniffer/ethernetprotocol.h ../sniffer/interfaces.h ../sniffer/internetprotocol.h ../sniffer/mainwindow.h ../sniffer/mypacket.h ../sniffer/readPcap.h .tmp/sniffer1.0.0/ && $(COPY_FILE) --parents ../sniffer/main.cpp ../sniffer/capture.cpp ../sniffer/ethernetprotocol.cpp ../sniffer/interfaces.cpp ../sniffer/internetprotocol.cpp ../sniffer/mainwindow.cpp ../sniffer/mypacket.cpp ../sniffer/readPcap.cpp .tmp/sniffer1.0.0/ && $(COPY_FILE) --parents ../sniffer/mainwindow.ui .tmp/sniffer1.0.0/ && (cd `dirname .tmp/sniffer1.0.0` && $(TAR) sniffer1.0.0.tar sniffer1.0.0 && $(COMPRESS) sniffer1.0.0.tar) && $(MOVE) `dirname .tmp/sniffer1.0.0`/sniffer1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/sniffer1.0.0
 
 
 clean:compiler_clean 
@@ -316,9 +320,73 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_capture.cpp
+compiler_moc_header_make_all: moc_capture.cpp moc_mainwindow.cpp moc_readPcap.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_capture.cpp
+	-$(DEL_FILE) moc_capture.cpp moc_mainwindow.cpp moc_readPcap.cpp
+moc_capture.cpp: /usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/QMutex \
+		../sniffer/internetprotocol.h \
+		../sniffer/mypacket.h \
+		../sniffer/capture.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../sniffer/capture.h -o moc_capture.cpp
+
 moc_mainwindow.cpp: /usr/include/qt5/QtWidgets/QTableView \
 		/usr/include/qt5/QtWidgets/qtableview.h \
 		/usr/include/qt5/QtWidgets/qabstractitemview.h \
@@ -457,13 +525,20 @@ moc_mainwindow.cpp: /usr/include/qt5/QtWidgets/QTableView \
 		../sniffer/ethernetprotocol.h \
 		../sniffer/internetprotocol.h \
 		../sniffer/capture.h \
-		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/QMutex \
 		../sniffer/interfaces.h \
+		../sniffer/readPcap.h \
+		/usr/local/include/pcap.h \
+		/usr/local/include/pcap/pcap.h \
+		/usr/local/include/pcap/bpf.h \
+		/usr/include/qt5/QtCore/QObject \
 		../sniffer/mainwindow.h
 	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../sniffer/mainwindow.h -o moc_mainwindow.cpp
 
-moc_capture.cpp: /usr/include/qt5/QtCore/QObject \
+moc_readPcap.cpp: /usr/local/include/pcap.h \
+		/usr/local/include/pcap/pcap.h \
+		/usr/local/include/pcap/bpf.h \
+		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qobject.h \
 		/usr/include/qt5/QtCore/qobjectdefs.h \
 		/usr/include/qt5/QtCore/qnamespace.h \
@@ -520,13 +595,9 @@ moc_capture.cpp: /usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/qcontainerfwd.h \
 		/usr/include/qt5/QtCore/qisenum.h \
 		/usr/include/qt5/QtCore/qobject_impl.h \
-		/usr/include/qt5/QtCore/QThread \
-		/usr/include/qt5/QtCore/qthread.h \
-		/usr/include/qt5/QtCore/QMutex \
-		../sniffer/internetprotocol.h \
 		../sniffer/mypacket.h \
-		../sniffer/capture.h
-	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../sniffer/capture.h -o moc_capture.cpp
+		../sniffer/readPcap.h
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) $(INCPATH) -I/usr/include/c++/4.8 -I/usr/include/x86_64-linux-gnu/c++/4.8 -I/usr/include/c++/4.8/backward -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../sniffer/readPcap.h -o moc_readPcap.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -685,9 +756,13 @@ main.o: ../sniffer/main.cpp ../sniffer/mainwindow.h \
 		../sniffer/ethernetprotocol.h \
 		../sniffer/internetprotocol.h \
 		../sniffer/capture.h \
-		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/QMutex \
 		../sniffer/interfaces.h \
+		../sniffer/readPcap.h \
+		/usr/local/include/pcap.h \
+		/usr/local/include/pcap/pcap.h \
+		/usr/local/include/pcap/bpf.h \
+		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtWidgets/QApplication \
 		/usr/include/qt5/QtWidgets/qapplication.h \
 		/usr/include/qt5/QtCore/qcoreapplication.h \
@@ -696,6 +771,133 @@ main.o: ../sniffer/main.cpp ../sniffer/mainwindow.h \
 		/usr/include/qt5/QtGui/qguiapplication.h \
 		/usr/include/qt5/QtGui/qinputmethod.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../sniffer/main.cpp
+
+capture.o: ../sniffer/capture.cpp /usr/include/qt5/QtWidgets/QMessageBox \
+		/usr/include/qt5/QtWidgets/qmessagebox.h \
+		/usr/include/qt5/QtWidgets/qdialog.h \
+		/usr/include/qt5/QtWidgets/qwidget.h \
+		/usr/include/qt5/QtGui/qwindowdefs.h \
+		/usr/include/qt5/QtCore/qglobal.h \
+		/usr/include/qt5/QtCore/qconfig.h \
+		/usr/include/qt5/QtCore/qfeatures.h \
+		/usr/include/qt5/QtCore/qsystemdetection.h \
+		/usr/include/qt5/QtCore/qprocessordetection.h \
+		/usr/include/qt5/QtCore/qcompilerdetection.h \
+		/usr/include/qt5/QtCore/qglobalstatic.h \
+		/usr/include/qt5/QtCore/qatomic.h \
+		/usr/include/qt5/QtCore/qbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_bootstrap.h \
+		/usr/include/qt5/QtCore/qgenericatomic.h \
+		/usr/include/qt5/QtCore/qatomic_msvc.h \
+		/usr/include/qt5/QtCore/qatomic_integrity.h \
+		/usr/include/qt5/QtCore/qoldbasicatomic.h \
+		/usr/include/qt5/QtCore/qatomic_vxworks.h \
+		/usr/include/qt5/QtCore/qatomic_power.h \
+		/usr/include/qt5/QtCore/qatomic_alpha.h \
+		/usr/include/qt5/QtCore/qatomic_armv7.h \
+		/usr/include/qt5/QtCore/qatomic_armv6.h \
+		/usr/include/qt5/QtCore/qatomic_armv5.h \
+		/usr/include/qt5/QtCore/qatomic_bfin.h \
+		/usr/include/qt5/QtCore/qatomic_ia64.h \
+		/usr/include/qt5/QtCore/qatomic_mips.h \
+		/usr/include/qt5/QtCore/qatomic_s390.h \
+		/usr/include/qt5/QtCore/qatomic_sh4a.h \
+		/usr/include/qt5/QtCore/qatomic_sparc.h \
+		/usr/include/qt5/QtCore/qatomic_gcc.h \
+		/usr/include/qt5/QtCore/qatomic_x86.h \
+		/usr/include/qt5/QtCore/qatomic_cxx11.h \
+		/usr/include/qt5/QtCore/qatomic_unix.h \
+		/usr/include/qt5/QtCore/qmutex.h \
+		/usr/include/qt5/QtCore/qlogging.h \
+		/usr/include/qt5/QtCore/qflags.h \
+		/usr/include/qt5/QtCore/qtypeinfo.h \
+		/usr/include/qt5/QtCore/qtypetraits.h \
+		/usr/include/qt5/QtCore/qsysinfo.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
+		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
+		/usr/include/qt5/QtGui/qwindowdefs_win.h \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qstring.h \
+		/usr/include/qt5/QtCore/qchar.h \
+		/usr/include/qt5/QtCore/qbytearray.h \
+		/usr/include/qt5/QtCore/qrefcount.h \
+		/usr/include/qt5/QtCore/qarraydata.h \
+		/usr/include/qt5/QtCore/qstringbuilder.h \
+		/usr/include/qt5/QtCore/qlist.h \
+		/usr/include/qt5/QtCore/qalgorithms.h \
+		/usr/include/qt5/QtCore/qiterator.h \
+		/usr/include/qt5/QtCore/qcoreevent.h \
+		/usr/include/qt5/QtCore/qscopedpointer.h \
+		/usr/include/qt5/QtCore/qmetatype.h \
+		/usr/include/qt5/QtCore/qvarlengtharray.h \
+		/usr/include/qt5/QtCore/qcontainerfwd.h \
+		/usr/include/qt5/QtCore/qisenum.h \
+		/usr/include/qt5/QtCore/qobject_impl.h \
+		/usr/include/qt5/QtCore/qmargins.h \
+		/usr/include/qt5/QtCore/qrect.h \
+		/usr/include/qt5/QtCore/qsize.h \
+		/usr/include/qt5/QtCore/qpoint.h \
+		/usr/include/qt5/QtGui/qpaintdevice.h \
+		/usr/include/qt5/QtGui/qpalette.h \
+		/usr/include/qt5/QtGui/qcolor.h \
+		/usr/include/qt5/QtGui/qrgb.h \
+		/usr/include/qt5/QtCore/qstringlist.h \
+		/usr/include/qt5/QtCore/qdatastream.h \
+		/usr/include/qt5/QtCore/qiodevice.h \
+		/usr/include/qt5/QtCore/qpair.h \
+		/usr/include/qt5/QtCore/qregexp.h \
+		/usr/include/qt5/QtCore/qstringmatcher.h \
+		/usr/include/qt5/QtGui/qbrush.h \
+		/usr/include/qt5/QtCore/qvector.h \
+		/usr/include/qt5/QtGui/qmatrix.h \
+		/usr/include/qt5/QtGui/qpolygon.h \
+		/usr/include/qt5/QtGui/qregion.h \
+		/usr/include/qt5/QtCore/qline.h \
+		/usr/include/qt5/QtGui/qtransform.h \
+		/usr/include/qt5/QtGui/qpainterpath.h \
+		/usr/include/qt5/QtGui/qimage.h \
+		/usr/include/qt5/QtGui/qpixmap.h \
+		/usr/include/qt5/QtCore/qsharedpointer.h \
+		/usr/include/qt5/QtCore/qshareddata.h \
+		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
+		/usr/include/qt5/QtCore/qhash.h \
+		/usr/include/qt5/QtGui/qfont.h \
+		/usr/include/qt5/QtGui/qfontmetrics.h \
+		/usr/include/qt5/QtGui/qfontinfo.h \
+		/usr/include/qt5/QtWidgets/qsizepolicy.h \
+		/usr/include/qt5/QtGui/qcursor.h \
+		/usr/include/qt5/QtGui/qkeysequence.h \
+		/usr/include/qt5/QtGui/qevent.h \
+		/usr/include/qt5/QtCore/qvariant.h \
+		/usr/include/qt5/QtCore/qmap.h \
+		/usr/include/qt5/QtCore/qdebug.h \
+		/usr/include/qt5/QtCore/qtextstream.h \
+		/usr/include/qt5/QtCore/qlocale.h \
+		/usr/include/qt5/QtCore/qset.h \
+		/usr/include/qt5/QtCore/qcontiguouscache.h \
+		/usr/include/qt5/QtCore/qurl.h \
+		/usr/include/qt5/QtCore/qurlquery.h \
+		/usr/include/qt5/QtCore/qfile.h \
+		/usr/include/qt5/QtCore/qfiledevice.h \
+		/usr/include/qt5/QtGui/qvector2d.h \
+		/usr/include/qt5/QtGui/qtouchdevice.h \
+		../sniffer/capture.h \
+		/usr/include/qt5/QtCore/QThread \
+		/usr/include/qt5/QtCore/qthread.h \
+		/usr/include/qt5/QtCore/QMutex \
+		../sniffer/internetprotocol.h \
+		../sniffer/mypacket.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o capture.o ../sniffer/capture.cpp
+
+ethernetprotocol.o: ../sniffer/ethernetprotocol.cpp ../sniffer/ethernetprotocol.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ethernetprotocol.o ../sniffer/ethernetprotocol.cpp
+
+interfaces.o: ../sniffer/interfaces.cpp ../sniffer/interfaces.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o interfaces.o ../sniffer/interfaces.cpp
+
+internetprotocol.o: ../sniffer/internetprotocol.cpp ../sniffer/internetprotocol.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o internetprotocol.o ../sniffer/internetprotocol.cpp
 
 mainwindow.o: ../sniffer/mainwindow.cpp /usr/include/qt5/QtCore/QList \
 		/usr/include/qt5/QtCore/qlist.h \
@@ -825,6 +1027,14 @@ mainwindow.o: ../sniffer/mainwindow.cpp /usr/include/qt5/QtCore/QList \
 		/usr/include/qt5/QtWidgets/qtabbar.h \
 		/usr/include/qt5/QtWidgets/qtabwidget.h \
 		/usr/include/qt5/QtWidgets/qrubberband.h \
+		/usr/include/qt5/QtWidgets/QFileDialog \
+		/usr/include/qt5/QtWidgets/qfiledialog.h \
+		/usr/include/qt5/QtCore/qdir.h \
+		/usr/include/qt5/QtCore/qfileinfo.h \
+		/usr/include/qt5/QtWidgets/qdialog.h \
+		/usr/local/include/pcap.h \
+		/usr/local/include/pcap/pcap.h \
+		/usr/local/include/pcap/bpf.h \
 		../sniffer/mainwindow.h \
 		/usr/include/qt5/QtWidgets/QTableView \
 		/usr/include/qt5/QtGui/QStandardItemModel \
@@ -837,9 +1047,10 @@ mainwindow.o: ../sniffer/mainwindow.cpp /usr/include/qt5/QtCore/QList \
 		../sniffer/ethernetprotocol.h \
 		../sniffer/internetprotocol.h \
 		../sniffer/capture.h \
-		/usr/include/qt5/QtCore/QObject \
 		/usr/include/qt5/QtCore/QMutex \
 		../sniffer/interfaces.h \
+		../sniffer/readPcap.h \
+		/usr/include/qt5/QtCore/QObject \
 		ui_mainwindow.h \
 		/usr/include/qt5/QtCore/QVariant \
 		/usr/include/qt5/QtWidgets/QAction \
@@ -865,25 +1076,40 @@ mainwindow.o: ../sniffer/mainwindow.cpp /usr/include/qt5/QtCore/QList \
 		/usr/include/qt5/QtWidgets/qheaderview.h \
 		/usr/include/qt5/QtWidgets/QLabel \
 		/usr/include/qt5/QtWidgets/qlabel.h \
+		/usr/include/qt5/QtWidgets/QMenu \
+		/usr/include/qt5/QtWidgets/qmenu.h \
 		/usr/include/qt5/QtWidgets/QMenuBar \
 		/usr/include/qt5/QtWidgets/qmenubar.h \
-		/usr/include/qt5/QtWidgets/qmenu.h \
+		/usr/include/qt5/QtWidgets/QPushButton \
+		/usr/include/qt5/QtWidgets/qpushbutton.h \
+		/usr/include/qt5/QtWidgets/qabstractbutton.h \
 		/usr/include/qt5/QtWidgets/QStatusBar \
 		/usr/include/qt5/QtWidgets/qstatusbar.h \
 		/usr/include/qt5/QtWidgets/QTableWidget \
+		/usr/include/qt5/QtWidgets/QTextEdit \
+		/usr/include/qt5/QtWidgets/qtextedit.h \
+		/usr/include/qt5/QtGui/qtextdocument.h \
+		/usr/include/qt5/QtGui/qtextoption.h \
+		/usr/include/qt5/QtGui/qtextcursor.h \
+		/usr/include/qt5/QtGui/qtextformat.h \
+		/usr/include/qt5/QtGui/qpen.h \
 		/usr/include/qt5/QtWidgets/QToolBar \
 		/usr/include/qt5/QtWidgets/qtoolbar.h \
+		/usr/include/qt5/QtWidgets/QVBoxLayout \
 		/usr/include/qt5/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../sniffer/mainwindow.cpp
 
-interfaces.o: ../sniffer/interfaces.cpp ../sniffer/interfaces.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o interfaces.o ../sniffer/interfaces.cpp
+mypacket.o: ../sniffer/mypacket.cpp ../sniffer/mypacket.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mypacket.o ../sniffer/mypacket.cpp
 
-capture.o: ../sniffer/capture.cpp /usr/include/qt5/QtWidgets/QMessageBox \
-		/usr/include/qt5/QtWidgets/qmessagebox.h \
-		/usr/include/qt5/QtWidgets/qdialog.h \
-		/usr/include/qt5/QtWidgets/qwidget.h \
-		/usr/include/qt5/QtGui/qwindowdefs.h \
+readPcap.o: ../sniffer/readPcap.cpp ../sniffer/readPcap.h \
+		/usr/local/include/pcap.h \
+		/usr/local/include/pcap/pcap.h \
+		/usr/local/include/pcap/bpf.h \
+		/usr/include/qt5/QtCore/QObject \
+		/usr/include/qt5/QtCore/qobject.h \
+		/usr/include/qt5/QtCore/qobjectdefs.h \
+		/usr/include/qt5/QtCore/qnamespace.h \
 		/usr/include/qt5/QtCore/qglobal.h \
 		/usr/include/qt5/QtCore/qconfig.h \
 		/usr/include/qt5/QtCore/qfeatures.h \
@@ -920,11 +1146,7 @@ capture.o: ../sniffer/capture.cpp /usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtCore/qtypeinfo.h \
 		/usr/include/qt5/QtCore/qtypetraits.h \
 		/usr/include/qt5/QtCore/qsysinfo.h \
-		/usr/include/qt5/QtCore/qobjectdefs.h \
-		/usr/include/qt5/QtCore/qnamespace.h \
 		/usr/include/qt5/QtCore/qobjectdefs_impl.h \
-		/usr/include/qt5/QtGui/qwindowdefs_win.h \
-		/usr/include/qt5/QtCore/qobject.h \
 		/usr/include/qt5/QtCore/qstring.h \
 		/usr/include/qt5/QtCore/qchar.h \
 		/usr/include/qt5/QtCore/qbytearray.h \
@@ -941,77 +1163,17 @@ capture.o: ../sniffer/capture.cpp /usr/include/qt5/QtWidgets/QMessageBox \
 		/usr/include/qt5/QtCore/qcontainerfwd.h \
 		/usr/include/qt5/QtCore/qisenum.h \
 		/usr/include/qt5/QtCore/qobject_impl.h \
-		/usr/include/qt5/QtCore/qmargins.h \
-		/usr/include/qt5/QtCore/qrect.h \
-		/usr/include/qt5/QtCore/qsize.h \
-		/usr/include/qt5/QtCore/qpoint.h \
-		/usr/include/qt5/QtGui/qpaintdevice.h \
-		/usr/include/qt5/QtGui/qpalette.h \
-		/usr/include/qt5/QtGui/qcolor.h \
-		/usr/include/qt5/QtGui/qrgb.h \
-		/usr/include/qt5/QtCore/qstringlist.h \
-		/usr/include/qt5/QtCore/qdatastream.h \
-		/usr/include/qt5/QtCore/qiodevice.h \
-		/usr/include/qt5/QtCore/qpair.h \
-		/usr/include/qt5/QtCore/qregexp.h \
-		/usr/include/qt5/QtCore/qstringmatcher.h \
-		/usr/include/qt5/QtGui/qbrush.h \
-		/usr/include/qt5/QtCore/qvector.h \
-		/usr/include/qt5/QtGui/qmatrix.h \
-		/usr/include/qt5/QtGui/qpolygon.h \
-		/usr/include/qt5/QtGui/qregion.h \
-		/usr/include/qt5/QtCore/qline.h \
-		/usr/include/qt5/QtGui/qtransform.h \
-		/usr/include/qt5/QtGui/qpainterpath.h \
-		/usr/include/qt5/QtGui/qimage.h \
-		/usr/include/qt5/QtGui/qpixmap.h \
-		/usr/include/qt5/QtCore/qsharedpointer.h \
-		/usr/include/qt5/QtCore/qshareddata.h \
-		/usr/include/qt5/QtCore/qsharedpointer_impl.h \
-		/usr/include/qt5/QtCore/qhash.h \
-		/usr/include/qt5/QtGui/qfont.h \
-		/usr/include/qt5/QtGui/qfontmetrics.h \
-		/usr/include/qt5/QtGui/qfontinfo.h \
-		/usr/include/qt5/QtWidgets/qsizepolicy.h \
-		/usr/include/qt5/QtGui/qcursor.h \
-		/usr/include/qt5/QtGui/qkeysequence.h \
-		/usr/include/qt5/QtGui/qevent.h \
-		/usr/include/qt5/QtCore/qvariant.h \
-		/usr/include/qt5/QtCore/qmap.h \
-		/usr/include/qt5/QtCore/qdebug.h \
-		/usr/include/qt5/QtCore/qtextstream.h \
-		/usr/include/qt5/QtCore/qlocale.h \
-		/usr/include/qt5/QtCore/qset.h \
-		/usr/include/qt5/QtCore/qcontiguouscache.h \
-		/usr/include/qt5/QtCore/qurl.h \
-		/usr/include/qt5/QtCore/qurlquery.h \
-		/usr/include/qt5/QtCore/qfile.h \
-		/usr/include/qt5/QtCore/qfiledevice.h \
-		/usr/include/qt5/QtGui/qvector2d.h \
-		/usr/include/qt5/QtGui/qtouchdevice.h \
-		../sniffer/capture.h \
-		/usr/include/qt5/QtCore/QObject \
-		/usr/include/qt5/QtCore/QThread \
-		/usr/include/qt5/QtCore/qthread.h \
-		/usr/include/qt5/QtCore/QMutex \
-		../sniffer/internetprotocol.h \
 		../sniffer/mypacket.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o capture.o ../sniffer/capture.cpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o readPcap.o ../sniffer/readPcap.cpp
 
-internetprotocol.o: ../sniffer/internetprotocol.cpp ../sniffer/internetprotocol.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o internetprotocol.o ../sniffer/internetprotocol.cpp
-
-mypacket.o: ../sniffer/mypacket.cpp ../sniffer/mypacket.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mypacket.o ../sniffer/mypacket.cpp
-
-ethernetprotocol.o: ../sniffer/ethernetprotocol.cpp ../sniffer/ethernetprotocol.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ethernetprotocol.o ../sniffer/ethernetprotocol.cpp
+moc_capture.o: moc_capture.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_capture.o moc_capture.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
 
-moc_capture.o: moc_capture.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_capture.o moc_capture.cpp
+moc_readPcap.o: moc_readPcap.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_readPcap.o moc_readPcap.cpp
 
 ####### Install
 

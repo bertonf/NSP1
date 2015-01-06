@@ -107,7 +107,7 @@
            <bool>false</bool>
           </property>
           <attribute name="horizontalHeaderVisible">
-           <bool>true</bool>
+           <bool>false</bool>
           </attribute>
           <attribute name="horizontalHeaderCascadingSectionResizes">
            <bool>true</bool>
@@ -184,6 +184,7 @@
      <string>pcap dump</string>
     </property>
     <addaction name="actionOpen_file"/>
+    <addaction name="actionSave"/>
    </widget>
    <widget class="QMenu" name="menuForging">
     <property name="title">
@@ -208,7 +209,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen_file">
    <property name="text">
-    <string>Open file</string>
+    <string>Open</string>
    </property>
   </action>
   <action name="actionTCP">
@@ -229,6 +230,11 @@
   <action name="actionICMP">
    <property name="text">
     <string>ICMP</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>Save</string>
    </property>
   </action>
  </widget>

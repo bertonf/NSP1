@@ -10,9 +10,13 @@
 #include <linux/udp.h>
 #include <QList>
 #include <QTableWidgetItem>
+#include <QFileDialog>
+#include <pcap.h>
+#include <pcap/pcap.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "mypacket.h"
+#include "readPcap.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -23,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButtonStartStop->setText("Start Capture");
     InitInterfaces(_interface.GetInterfaces());
 
+    connect(&_readPcap, SIGNAL(AddPacketFromFileToList(MyPacket*)),
+            this, SLOT(AddRow(MyPacket*)));
     connect(&_capture, SIGNAL(AddPacketToList(MyPacket*)),
             this, SLOT(AddRow(MyPacket*)));
 }
@@ -45,11 +51,11 @@ void MainWindow::RowIPv4(MyPacket * packet, int numRow)
     struct in_addr sin_addr;
 
     sin_addr.s_addr = packet->getIpHeader()->saddr;
-    std::string tmp = inet_ntoa(sin_addr);
-    ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(tmp))); /*SOURCE*/
+    std::string ipsrc = inet_ntoa(sin_addr);
+    ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(ipsrc))); /*SOURCE*/
     sin_addr.s_addr = packet->getIpHeader()->daddr;
-    tmp = inet_ntoa(sin_addr);
-    ui->tableWidget->setItem(numRow,2,NewItem(QString::fromStdString(tmp))); /*DESTINATION0*/
+    std::string ipdest = inet_ntoa(sin_addr);
+    ui->tableWidget->setItem(numRow,2,NewItem(QString::fromStdString(ipdest))); /*DESTINATION0*/
     ui->tableWidget->setItem(numRow,3,NewItem(QString::fromStdString(
                                 _ipProto.getProtocolName(
                                     packet->getIpHeader()->protocol)))); /*PROTOCOL*/
@@ -60,25 +66,34 @@ void MainWindow::RowIPv4(MyPacket * packet, int numRow)
         int portsrc;
         int portdest;
         tcphdr = reinterpret_cast<struct tcphdr *>(packet->getIpHeader()) + sizeof(struct iphdr);
-        portsrc = tcphdr->source;
-        portdest = tcphdr->dest;
-
+        portsrc = htobe16(tcphdr->source);
+        portdest = htobe16(tcphdr->dest);
+        std::cout << "SRC = " << tcphdr->source << " - DEST = " << tcphdr->dest << std::endl;
         QString info = "Port Source = " + QString::number(portsrc) +
                         " / Port Destination = " + QString::number(portdest);
         ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
     }
     else if (packet->getIpHeader()->protocol == 17) /*UDP*/
     {
-        struct tcphdr *udphdr;
-        int portsrc;
-        int portdest;
-        udphdr = reinterpret_cast<struct tcphdr *>(packet->getIpHeader()) + sizeof(struct iphdr);
-        portsrc = udphdr->source;
-        portdest = udphdr->dest;
+        if (ipdest == "239.255.255.250") /*protocol SSDP*/
+        {
+            ui->tableWidget->setItem(numRow,3,NewItem("SSDP"));
+            ui->tableWidget->setItem(numRow,4,NewItem("NOTIFY HTTP")); /*INFO*/
+        }
+        else
+        {
+            struct udphdr *udphdr;
+            int portsrc;
+            int portdest;
 
-        QString info = "Port Source = " + QString::number(portsrc) +
-                        " / Port Destination = " + QString::number(portdest);
-        ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
+            udphdr = reinterpret_cast<struct udphdr *>(packet->getIpHeader()) + sizeof(struct iphdr);
+            portsrc = htobe16(udphdr->source);
+            portdest = htobe16(udphdr->dest);
+            QString info = "Port Source = " + QString::number(portsrc) +
+                            " / Port Destination = " + QString::number(portdest);
+            ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
+        }
+
     }
 }
 
@@ -87,14 +102,52 @@ void MainWindow::RowIPv6(MyPacket * packet, int numRow)
     std::cout << "IPV6" << std::endl;
     char tmp2[INET6_ADDRSTRLEN];
     inet_ntop(AF_INET6, &(packet->getIpHeader6()->ip6_src), tmp2, INET6_ADDRSTRLEN);
-    std::string tmp = tmp2;
-    ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(tmp))); /*SOURCE*/
+    std::string ipsrc = tmp2;
+    ui->tableWidget->setItem(numRow,1,NewItem(QString::fromStdString(ipsrc))); /*SOURCE*/
     inet_ntop(AF_INET6, &(packet->getIpHeader6()->ip6_dst), tmp2, INET6_ADDRSTRLEN);
-    tmp = tmp2;
-    ui->tableWidget->setItem(numRow,2,NewItem(QString::fromStdString(tmp))); /*DESTINATION0*/
+    std::string ipdest = tmp2;
+    ui->tableWidget->setItem(numRow,2,NewItem(QString::fromStdString(ipdest))); /*DESTINATION0*/
     ui->tableWidget->setItem(numRow,3,NewItem(QString::fromStdString(
                                  _ipProto.getProtocolName(
                                      packet->getIpHeader6()->ip6_nxt)))); /*PROTOCOL*/
+    if (packet->getIpHeader6()->ip6_nxt == 6) /*TCP*/
+    {
+        struct tcphdr *tcphdr;
+        int portsrc;
+        int portdest;
+        tcphdr = reinterpret_cast<struct tcphdr *>(packet->getIpHeader6()) + sizeof(struct ip6_hdr);
+        portsrc = htobe16(tcphdr->source);
+        portdest = htobe16(tcphdr->dest);
+std::cout << "SRC = " << tcphdr->source << " - DEST = " << tcphdr->dest << std::endl;
+        QString info = "Port Source = " + QString::number(portsrc) +
+                        " / Port Destination = " + QString::number(portdest);
+        ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
+    }
+    else if (packet->getIpHeader6()->ip6_nxt == 17) /*UDP*/
+    {
+        if (ipdest == "ff01::c" ||
+            ipdest == "ff02::c" ||
+            ipdest == "ff05::c" ||
+            ipdest == "ff08::c" ||
+            ipdest == "ff0e::c") /*protocol SSDP*/
+        {
+            ui->tableWidget->setItem(numRow,3,NewItem("SSDP"));
+            ui->tableWidget->setItem(numRow,4,NewItem("NOTIFY HTTP")); /*INFO*/
+        }
+        else
+        {
+            struct udphdr *udphdr;
+            int portsrc;
+            int portdest;
+
+            udphdr = reinterpret_cast<struct udphdr *>(packet->getIpHeader6()) + sizeof(struct ip6_hdr);
+            portsrc = htobe16(udphdr->source);
+            portdest = htobe16(udphdr->dest);
+            QString info = "Port Source = " + QString::number(portsrc) +
+                            " / Port Destination = " + QString::number(portdest);
+            ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
+        }
+    }
 
 }
 
@@ -187,6 +240,44 @@ void MainWindow::AddRow(MyPacket * packet)
     }
 }
 
+void MainWindow::AddRowFromFile(MyPacket * packet)
+{
+    try
+    {
+        if (packet == NULL)
+            return;
+        std::cout << "DEBUT FONCTION AddRow()" << std::endl;
+        int numRow = ui->tableWidget->rowCount();
+        _packetTab.push_back(packet);
+        ui->tableWidget->insertRow(numRow);
+        ui->tableWidget->setItem(numRow,0,NewItem(QString::number(numRow)));
+        if (packet->getIpHeader() != NULL)
+        {
+            RowIPv4(packet, numRow);
+        }
+        else if (packet->getIpHeader6() != NULL)
+        {
+            RowIPv6(packet, numRow);
+        }
+        else if (packet->getArpHeader() != NULL)
+        {
+            RowArp(packet, numRow);
+        }
+        else
+        {
+            RowOther(packet, numRow);
+        }
+        ui->tableWidget->scrollToBottom();
+        ui->tableWidget->resizeColumnsToContents();
+        ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
+        std::cout << "END FONCTION AddRow()" << std::endl;
+    }
+    catch(std::exception ex)
+    {
+       std::cerr << "ERROR : " << ex.what() << std::endl;
+    }
+}
+
 QTableWidgetItem* MainWindow::NewItem(const QString str)
 {
    QTableWidgetItem *newItem = new QTableWidgetItem(str);
@@ -206,7 +297,6 @@ void MainWindow::on_tableWidget_currentCellChanged(int currentRow, int currentCo
         return;
     char hex[20];
     std::string bufferHex;
-    char str[20];
     std::string bufferStr;
     std::string tmp;
     std::string tmp2;
@@ -224,12 +314,9 @@ void MainWindow::on_tableWidget_currentCellChanged(int currentRow, int currentCo
         tmp = hex;
         bufferHex += " " + tmp;
 
-        if (packet->getBuffer()[i] >= 33 && packet->getBuffer()[i] >= 126)
+        if (packet->getBuffer()[i] >= 33 && packet->getBuffer()[i] <= 126)
         {
-            //tmp2 = reinterpret_cast<char*>(packet->getBuffer()[i]);
-            sprintf(str, "%c",
-                packet->getBuffer()[i]);
-            tmp2 = str;
+            tmp2 = static_cast<char>(packet->getBuffer()[i]);
         }
         else
             tmp2 = ".";
@@ -258,4 +345,40 @@ void MainWindow::on_pushButtonStartStop_clicked()
         _capture.start();
     }
     ui->pushButtonStartStop->setEnabled(true);
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    pcap_t *p;
+    pcap_dumper_t *pdumper;
+    struct pcap_pkthdr pcaphdr;
+
+    if (_capture.getCaptureOn())
+    {
+        on_pushButtonStartStop_clicked();
+    }
+    QString file = QFileDialog::getSaveFileName(this, "Save", "/home", "pcap file (*.pcap)");
+
+    p = pcap_open_dead(DLT_EN10MB, 65535);
+    pdumper = pcap_dump_open(p, file.toStdString().c_str());
+
+    for (std::vector<MyPacket*>::const_iterator it = _packetTab.begin();
+         it != _packetTab.end(); ++it)
+    {
+        pcaphdr.caplen = (*it)->getLength();
+        pcaphdr.len = (*it)->getLength();
+        pcap_dump(reinterpret_cast<uchar*>(pdumper), &pcaphdr, (*it)->getBuffer());
+    }
+    pcap_dump_close(pdumper);
+}
+
+void MainWindow::on_actionOpen_file_triggered()
+{
+    if (_capture.getCaptureOn())
+    {
+        on_pushButtonStartStop_clicked();
+    }
+    //ui->tableWidget->clearContents(); /*BUG*/
+    QString file = QFileDialog::getOpenFileName(this, "Open", "/home", "pcap file (*.pcap)");
+    _readPcap.run(file.toStdString());
 }

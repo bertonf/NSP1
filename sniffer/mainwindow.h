@@ -11,6 +11,7 @@
 #include "internetprotocol.h"
 #include "capture.h"
 #include "interfaces.h"
+#include "readPcap.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,10 +30,15 @@ public:
     const Ui::MainWindow & getUI();
 public slots:
     void AddRow(MyPacket*);
+    void AddRowFromFile(MyPacket*);
 private slots:
     void on_tableWidget_currentCellChanged(int currentRow, int currentColumn,
                                            int previousRow, int previousColumn);
     void on_pushButtonStartStop_clicked();
+
+    void on_actionSave_triggered();
+
+    void on_actionOpen_file_triggered();
 
 private:
     Ui::MainWindow *ui;
@@ -41,6 +47,7 @@ private:
     EthernetProtocol _ethProto;
     std::vector<MyPacket*> _packetTab;
     Capture _capture;
+    ReadPcap _readPcap;
     Interfaces _interface;
     void InitInterfaces(const std::vector<std::string>& );
     void RowIPv4(MyPacket * packet, int numRow);
