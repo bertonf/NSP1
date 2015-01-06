@@ -19,7 +19,12 @@ SOURCES += main.cpp \
     internetprotocol.cpp \
     mainwindow.cpp \
     mypacket.cpp \
+<<<<<<< HEAD
     readPcap.cpp
+=======
+    ethernetprotocol.cpp \
+    forger.cpp
+>>>>>>> 4a05d04864153d503682191d2b2b3e3b9d16f297
 
 HEADERS  += \
     capture.h \
@@ -28,6 +33,7 @@ HEADERS  += \
     internetprotocol.h \
     mainwindow.h \
     mypacket.h \
+<<<<<<< HEAD
     readPcap.h
 
 FORMS += \
@@ -40,5 +46,9 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lpcap
 
 INCLUDEPATH += $$PWD/../../../../usr/local/include
 DEPENDPATH += $$PWD/../../../../usr/local/include
+=======
+    ethernetprotocol.h \
+    forger.h
+>>>>>>> 4a05d04864153d503682191d2b2b3e3b9d16f297
 
 unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../usr/local/lib/libpcap.a

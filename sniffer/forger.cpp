@@ -22,7 +22,8 @@ struct ethhdr *CreateEthHdr(unsigned long dest_mac, char *proto)
         memcpy(&tmp, ifr->ifr_ifru.ifru_hwaddr.sa_data, 6);
         tmp = htobe64((tmp<<16));
         memcpy(ethhdr->h_source, &tmp, 6);
-        ethhdr->h_proto = htobe16(*proto);  /*NE MARCHERA PAS *proto est un octet et pas tous les octes de ta chaine.*/
+        memcpy(ethhdr->h_proto, proto, 2); // up
+        ethhdr->h_proto = htobe16(ethhdr->h_proto); // up
     return ethhdr;
 }
 
@@ -37,9 +38,9 @@ unsigned char *packet;
 long tmp;
 
 arphdr.ar_hrd = htobe16(1);
-arphdr.ar_pro = htobe16(ethhdr->h_proto); /* ETHERTYPE_IP 0x0800*/ /*Pas sur que ca soit la meme chose*/
+arphdr.ar_pro = ethhdr->h_proto; /* ETHERTYPE_IP 0x0800*/ /*a test*/
 arphdr.ar_hln = 6;
-arphdr.ar_pln = ethhdr->h_proto;  /* ?? NOPE NOPE NOPE*/
+arphdr.ar_pln = 4;  /* ipv4 en dur pour le moment*/
 arphdr.ar_op = htobe16(operation); /*Demande arp = 1, Reponse arp = 2*/
 memcpy(macsrc, &tmp, 6);
 memcpy(ipsrc, &((struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr))->sin_addr.s_addr, 4);
