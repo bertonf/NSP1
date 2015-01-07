@@ -18,6 +18,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QStatusBar>
@@ -32,6 +33,12 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
+    QAction *actionOpen_file;
+    QAction *actionTCP;
+    QAction *actionUDP;
+    QAction *actionARP;
+    QAction *actionICMP;
+    QAction *actionSave;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_3;
     QVBoxLayout *verticalLayout;
@@ -46,6 +53,8 @@ public:
     QTextEdit *textEditHexa;
     QTextEdit *textEditChar;
     QMenuBar *menuBar;
+    QMenu *menuPcap_dump;
+    QMenu *menuForging;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -57,6 +66,18 @@ public:
         MainWindow->resize(958, 744);
         MainWindow->setAutoFillBackground(true);
         MainWindow->setDockOptions(QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks|QMainWindow::ForceTabbedDocks);
+        actionOpen_file = new QAction(MainWindow);
+        actionOpen_file->setObjectName(QStringLiteral("actionOpen_file"));
+        actionTCP = new QAction(MainWindow);
+        actionTCP->setObjectName(QStringLiteral("actionTCP"));
+        actionUDP = new QAction(MainWindow);
+        actionUDP->setObjectName(QStringLiteral("actionUDP"));
+        actionARP = new QAction(MainWindow);
+        actionARP->setObjectName(QStringLiteral("actionARP"));
+        actionICMP = new QAction(MainWindow);
+        actionICMP->setObjectName(QStringLiteral("actionICMP"));
+        actionSave = new QAction(MainWindow);
+        actionSave->setObjectName(QStringLiteral("actionSave"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         centralWidget->setEnabled(true);
@@ -129,7 +150,7 @@ public:
         tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
         tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
         tableWidget->setWordWrap(false);
-        tableWidget->horizontalHeader()->setVisible(true);
+        tableWidget->horizontalHeader()->setVisible(false);
         tableWidget->horizontalHeader()->setCascadingSectionResizes(true);
         tableWidget->horizontalHeader()->setStretchLastSection(true);
         tableWidget->verticalHeader()->setVisible(false);
@@ -164,6 +185,10 @@ public:
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 958, 20));
+        menuPcap_dump = new QMenu(menuBar);
+        menuPcap_dump->setObjectName(QStringLiteral("menuPcap_dump"));
+        menuForging = new QMenu(menuBar);
+        menuForging->setObjectName(QStringLiteral("menuForging"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -171,6 +196,15 @@ public:
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         MainWindow->setStatusBar(statusBar);
+
+        menuBar->addAction(menuPcap_dump->menuAction());
+        menuBar->addAction(menuForging->menuAction());
+        menuPcap_dump->addAction(actionOpen_file);
+        menuPcap_dump->addAction(actionSave);
+        menuForging->addAction(actionTCP);
+        menuForging->addAction(actionUDP);
+        menuForging->addAction(actionICMP);
+        menuForging->addAction(actionARP);
 
         retranslateUi(MainWindow);
 
@@ -180,6 +214,12 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "Network Security Project 1", 0));
+        actionOpen_file->setText(QApplication::translate("MainWindow", "Open", 0));
+        actionTCP->setText(QApplication::translate("MainWindow", "TCP", 0));
+        actionUDP->setText(QApplication::translate("MainWindow", "UDP", 0));
+        actionARP->setText(QApplication::translate("MainWindow", "ARP", 0));
+        actionICMP->setText(QApplication::translate("MainWindow", "ICMP", 0));
+        actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
         labelInterface->setText(QApplication::translate("MainWindow", "Interfaces :", 0));
         pushButtonStartStop->setText(QApplication::translate("MainWindow", "PushButton", 0));
         label->setText(QApplication::translate("MainWindow", "<html><head/><body><p><br/></p></body></html>", 0));
@@ -193,6 +233,8 @@ public:
         ___qtablewidgetitem3->setText(QApplication::translate("MainWindow", "Protocol", 0));
         QTableWidgetItem *___qtablewidgetitem4 = tableWidget->horizontalHeaderItem(4);
         ___qtablewidgetitem4->setText(QApplication::translate("MainWindow", "Info", 0));
+        menuPcap_dump->setTitle(QApplication::translate("MainWindow", "pcap dump", 0));
+        menuForging->setTitle(QApplication::translate("MainWindow", "Forging", 0));
     } // retranslateUi
 
 };

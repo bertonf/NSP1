@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2014-10-20T23:13:33
+# Project created by QtCreator 2015-01-04T20:11:37
 #
 #-------------------------------------------------
 
@@ -12,21 +12,43 @@ TARGET = sniffer
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    interfaces.cpp \
+SOURCES += main.cpp \
     capture.cpp \
+    ethernetprotocol.cpp \
+    interfaces.cpp \
     internetprotocol.cpp \
+    mainwindow.cpp \
     mypacket.cpp \
+<<<<<<< HEAD
+    readPcap.cpp
+=======
     ethernetprotocol.cpp \
     forger.cpp
+>>>>>>> 4a05d04864153d503682191d2b2b3e3b9d16f297
 
-HEADERS  += mainwindow.h \
-    interfaces.h \
+HEADERS  += \
     capture.h \
+    ethernetprotocol.h \
+    interfaces.h \
     internetprotocol.h \
+    mainwindow.h \
     mypacket.h \
+<<<<<<< HEAD
+    readPcap.h
+
+FORMS += \
+    mainwindow.ui
+
+OTHER_FILES += \
+    sniffer.pro.user
+
+unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lpcap
+
+INCLUDEPATH += $$PWD/../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../usr/local/include
+=======
     ethernetprotocol.h \
     forger.h
+>>>>>>> 4a05d04864153d503682191d2b2b3e3b9d16f297
 
-FORMS    += mainwindow.ui
+unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../usr/local/lib/libpcap.a

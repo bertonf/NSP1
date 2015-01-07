@@ -1,26 +1,21 @@
-#include <stdio.h>
+#ifndef READPCAP_H
+#define READPCAP_H
+
+#include <string>
 #include <pcap.h>
-#include <stdlib.h>
-#include <netinet/ip.h>
-#include <arpa/inet.h>
-#include <errno.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/if_ether.h>
+#include <QObject>
 #include "mypacket.h"
 
-//defines for the packet type code in an ETHERNET header
-#define ETHER_TYPE_IP (0x0800)
-#define ETHER_TYPE_8021Q (0x8100)
-
-class ReadPcap
+class ReadPcap : public QObject
 {
- private:
+    Q_OBJECT
 
- public:
-  ReadPcap();
-  void run(string fileName);
-
+public:
+    ReadPcap();
+    void run(std::string fileName);
  signals:
-  void AddPacketFromFileToList(MyPacket*);
-}
+    void AddPacketFromFileToList(MyPacket*);
+};
+
+
+#endif // READPCAP_H

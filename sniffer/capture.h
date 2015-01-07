@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <queue>
-#include <QObject>
+
 #include <QThread>
 #include <QMutex>
 #include "internetprotocol.h"
