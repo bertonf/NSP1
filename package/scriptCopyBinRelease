@@ -1,0 +1,2 @@
+!#/bin/bash
+cp ../build-sniffer-Desktop-Release/sniffer NSP1/usr/bin/.

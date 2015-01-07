@@ -1,0 +1,8 @@
+Package: NSP1
+Version: 1.0
+Section: base
+Priority: optional
+Architecture: all
+Depends: tcpdump, qt-sdk
+Maintainer: berton_f<berton_f@epitech.eu>
+Description: Projet 1 du module de Network Security
