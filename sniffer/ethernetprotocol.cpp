@@ -4,7 +4,6 @@
 EthernetProtocol::EthernetProtocol()
 {
     InitEtherProt();
- // super com de la mort
 }
 
 void EthernetProtocol::InitEtherProt()
@@ -58,7 +57,6 @@ std::string EthernetProtocol::getProtocolName(unsigned int protocolNumber)
 {
     if (_protocolEther.find(protocolNumber>>16) == _protocolEther.end())
     {
-        //std::cout<<"num ethernet protocol inconnu " << std::hex << protocolNumber << std::endl;
         return ("Unknown");
     }
     return (_protocolEther[protocolNumber>>16]);

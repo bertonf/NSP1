@@ -48,7 +48,6 @@ void MainWindow::InitInterfaces(const std::vector<std::string>& list)
 
 void MainWindow::RowIPv4(MyPacket * packet, int numRow)
 {
-    std::cout << "IPV4" << std::endl;
     struct in_addr sin_addr;
 
     sin_addr.s_addr = packet->getIpHeader()->saddr;
@@ -69,7 +68,6 @@ void MainWindow::RowIPv4(MyPacket * packet, int numRow)
         tcphdr = reinterpret_cast<struct tcphdr *>(packet->getIpHeader()) + sizeof(struct iphdr);
         portsrc = htobe16(tcphdr->source);
         portdest = htobe16(tcphdr->dest);
-        std::cout << "SRC = " << tcphdr->source << " - DEST = " << tcphdr->dest << std::endl;
         QString info = "Port Source = " + QString::number(portsrc) +
                         " / Port Destination = " + QString::number(portdest);
         ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
@@ -100,7 +98,6 @@ void MainWindow::RowIPv4(MyPacket * packet, int numRow)
 
 void MainWindow::RowIPv6(MyPacket * packet, int numRow)
 {
-    std::cout << "IPV6" << std::endl;
     char tmp2[INET6_ADDRSTRLEN];
     inet_ntop(AF_INET6, &(packet->getIpHeader6()->ip6_src), tmp2, INET6_ADDRSTRLEN);
     std::string ipsrc = tmp2;
@@ -119,7 +116,6 @@ void MainWindow::RowIPv6(MyPacket * packet, int numRow)
         tcphdr = reinterpret_cast<struct tcphdr *>(packet->getIpHeader6()) + sizeof(struct ip6_hdr);
         portsrc = htobe16(tcphdr->source);
         portdest = htobe16(tcphdr->dest);
-std::cout << "SRC = " << tcphdr->source << " - DEST = " << tcphdr->dest << std::endl;
         QString info = "Port Source = " + QString::number(portsrc) +
                         " / Port Destination = " + QString::number(portdest);
         ui->tableWidget->setItem(numRow,4,NewItem(info)); /*INFO*/
@@ -154,7 +150,6 @@ std::cout << "SRC = " << tcphdr->source << " - DEST = " << tcphdr->dest << std::
 
 void MainWindow::RowArp(MyPacket * packet, int numRow)
 {
-    std::cout << "ARP" << std::endl;
     char macaddrsrc[6];
     char macaddrdest[6];
     char result[50];
@@ -179,7 +174,6 @@ void MainWindow::RowArp(MyPacket * packet, int numRow)
 
 void MainWindow::RowOther(MyPacket * packet, int numRow)
 {
-    std::cout << "OTHER" << std::endl;
     char macaddrsrc[6];
     char macaddrdest[6];
     char result[50];
@@ -209,7 +203,6 @@ void MainWindow::AddRow(MyPacket * packet)
     {
         if (packet == NULL)
             return;
-        std::cout << "DEBUT FONCTION AddRow()" << std::endl;
         int numRow = ui->tableWidget->rowCount();
         _packetTab.push_back(packet);
         ui->tableWidget->insertRow(numRow);
@@ -233,45 +226,6 @@ void MainWindow::AddRow(MyPacket * packet)
         ui->tableWidget->scrollToBottom();
         ui->tableWidget->resizeColumnsToContents();
         ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
-        std::cout << "END FONCTION AddRow()" << std::endl;
-    }
-    catch(std::exception ex)
-    {
-       std::cerr << "ERROR : " << ex.what() << std::endl;
-    }
-}
-
-void MainWindow::AddRowFromFile(MyPacket * packet)
-{
-    try
-    {
-        if (packet == NULL)
-            return;
-        std::cout << "DEBUT FONCTION AddRow()" << std::endl;
-        int numRow = ui->tableWidget->rowCount();
-        _packetTab.push_back(packet);
-        ui->tableWidget->insertRow(numRow);
-        ui->tableWidget->setItem(numRow,0,NewItem(QString::number(numRow)));
-        if (packet->getIpHeader() != NULL)
-        {
-            RowIPv4(packet, numRow);
-        }
-        else if (packet->getIpHeader6() != NULL)
-        {
-            RowIPv6(packet, numRow);
-        }
-        else if (packet->getArpHeader() != NULL)
-        {
-            RowArp(packet, numRow);
-        }
-        else
-        {
-            RowOther(packet, numRow);
-        }
-        ui->tableWidget->scrollToBottom();
-        ui->tableWidget->resizeColumnsToContents();
-        ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
-        std::cout << "END FONCTION AddRow()" << std::endl;
     }
     catch(std::exception ex)
     {

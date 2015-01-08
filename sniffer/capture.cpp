@@ -95,7 +95,6 @@ void Capture::run()
             return;
         }
         setCaptureOn(true);
-        std::cout << "Init done" << std::endl;
         while (getCaptureOn())
         {
             //buffer = reinterpret_cast<unsigned char*>(malloc(2048));
@@ -110,13 +109,11 @@ void Capture::run()
             usleep(100);
         }
         CloseRawSocket();
-        std::cout << "END CAPTURE" << std::endl;
     }
     catch(std::exception ex)
     {
         std::cerr << "Erreur durant la capture : " << ex.what() << std::endl;
         CloseRawSocket();
-        //std::cerr << "Error : Raw socket init failed." << ex.what << std::endl;
     }
 }
 

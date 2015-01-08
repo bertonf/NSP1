@@ -30,7 +30,6 @@ public:
     const Ui::MainWindow & getUI();
 public slots:
     void AddRow(MyPacket*);
-    void AddRowFromFile(MyPacket*);
 private slots:
     void on_tableWidget_currentCellChanged(int currentRow, int currentColumn,
                                            int previousRow, int previousColumn);
