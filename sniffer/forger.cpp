@@ -1,5 +1,14 @@
 #include "forger.h"
 
+typedef struct PseudoHeader
+{
+  unsigned long int source_ip;
+  unsigned long int dest_ip;
+  unsigned char reserved;
+  unsigned char protocol;
+  unsigned short int tcp_length;
+}PseudoHeader;
+
 Forger::Forger()
 {
 
@@ -70,7 +79,7 @@ struct ethhdr *CreateEthHdr(unsigned long dest_mac, char *proto)
 }
 */
 
-int createRawSocket()
+int Forger::createRawSocket()
 {
   int rawsock;
 
@@ -83,7 +92,7 @@ int createRawSocket()
   return rawsock;
 }
 
-int bindRawSocketToInterface(char *device, int rawsock)
+int Forger::bindRawSocketToInterface(const char *device, int rawsock)
 {
   struct sockaddr_ll sll;
   struct ifreq ifr;
@@ -111,7 +120,7 @@ int bindRawSocketToInterface(char *device, int rawsock)
   return 1;
 }
 
-int sendRawPacket(int rawsock, unsigned char *pkt, int pkt_len)
+int Forger::sendRawPacket(int rawsock, unsigned char *pkt, int pkt_len)
 {
   int sent= 0;
 
@@ -126,7 +135,7 @@ int sendRawPacket(int rawsock, unsigned char *pkt, int pkt_len)
 
 
 
-unsigned short computeChecksum(unsigned char *data, int len)
+unsigned short Forger::computeChecksum(unsigned char *data, int len)
 {
   long sum = 0;
   unsigned short *temp = (unsigned short *)data;
@@ -148,7 +157,7 @@ unsigned short computeChecksum(unsigned char *data, int len)
   return ~sum;
 }
 
-struct ethhdr* createEthHeader(char *src_mac, char *dst_mac, int protocol)
+struct ethhdr *Forger::createEthHeader(const char *src_mac, const char *dst_mac, int protocol)
 {
   struct ethhdr *ethernet_header;
 
@@ -162,7 +171,7 @@ struct ethhdr* createEthHeader(char *src_mac, char *dst_mac, int protocol)
   return (ethernet_header);
 }
 
-struct iphdr *createIPHeader(char *ipSrc, char *ipDest, int dataSize)
+struct iphdr *Forger::createIPHeader(const char *ipSrc, const char *ipDest, int dataSize)
 {
   struct iphdr *ip_header;
 
@@ -185,7 +194,7 @@ struct iphdr *createIPHeader(char *ipSrc, char *ipDest, int dataSize)
   return (ip_header);
 }
 
-struct tcphdr *createTCPHeader(int srcPort, int destPort)
+struct tcphdr *Forger::createTCPHeader(int srcPort, int destPort)
 {
   struct tcphdr *tcp_header;
 
@@ -205,7 +214,7 @@ struct tcphdr *createTCPHeader(int srcPort, int destPort)
   return (tcp_header);
 }
 
-void createPseudoHeaderAndComputeTcpChecksum(struct tcphdr *tcp_header, struct iphdr *ip_header, unsigned char *data, int dataSize)
+void Forger::createPseudoHeaderAndComputeTcpChecksum(struct tcphdr *tcp_header, struct iphdr *ip_header, char *data, int dataSize)
 {
   int segment_len = ntohs(ip_header->tot_len) - ip_header->ihl*4;
 
@@ -230,10 +239,10 @@ void createPseudoHeaderAndComputeTcpChecksum(struct tcphdr *tcp_header, struct i
   return;
 }
 
-int SendARPpacket(char *src_ipmac, char *dest_ipmac, unsigned long src_ip, unsigned long dest_ip, char operation, char *iface)
+int Forger::sendARPpacket(char *src_ipmac, char *dest_ipmac, char *src_ip, char *dest_ip, char operation, char *iface)
 {
-struct ethhdr ethhdr;
-struct arphdr arphdr;
+struct ethhdr *ethhdr;
+struct arphdr *arphdr;
 
 char macsrc[6];
 //char ipsrc[4];
@@ -244,17 +253,19 @@ unsigned int ipsrc;
 unsigned int ipdest;
 unsigned char *packet;
 
+int raw;
+
 //long tmp;
 
 ethhdr = new struct ethhdr;
 arphdr = new struct arphdr;
 
 ethhdr = createEthHeader(src_ipmac, dest_ipmac, ETHERTYPE_ARP);
-arphdr.ar_hrd = htobe16(1);
-arphdr.ar_pro = 0x0806; /*a test*/
-arphdr.ar_hln = 6;
-arphdr.ar_pln = 4;  /* ipv4 en dur pour le moment*/
-arphdr.ar_op = htobe16(operation); /*Demande arp = 1, Reponse arp = 2*/
+arphdr->ar_hrd = htobe16(1);
+arphdr->ar_pro = 0x0806; /*a test*/
+arphdr->ar_hln = 6;
+arphdr->ar_pln = 4;  /* ipv4 en dur pour le moment*/
+arphdr->ar_op = operation; /*Demande arp = 1, Reponse arp = 2*/
 
 ipsrc = inet_addr(src_ip);
 ipdest = inet_addr(dest_ip);
@@ -265,13 +276,13 @@ ipdest = inet_addr(dest_ip);
 packet = (unsigned char*)malloc(sizeof(struct ethhdr)+sizeof(struct arphdr)+20);
 memcpy(packet, ethhdr, sizeof(struct ethhdr));
 memcpy(packet + sizeof(struct ethhdr), &arphdr, sizeof(struct arphdr));
-memcpy(packet + sizeof(struct ethhdr) + sizeof(struct arphdr), &(ethhdr.h_source), 6);
+memcpy(packet + sizeof(struct ethhdr) + sizeof(struct arphdr), &(ethhdr->h_source), 6);
 memcpy(packet + sizeof(struct ethhdr) + sizeof(struct arphdr) + 6, &ipsrc, 4);
-memcpy(packet + sizeof(struct ethhdr) + sizeof(struct arphdr) + 10, &(ethhdr.h_dest), 6);
+memcpy(packet + sizeof(struct ethhdr) + sizeof(struct arphdr) + 10, &(ethhdr->h_dest), 6);
 memcpy(packet + sizeof(struct ethhdr) + sizeof(struct arphdr) + 16, &ipdest, 4);
 
 raw = createRawSocket();
-bindRawSocketToInterface(iface, raw, ETH_P_ALL);
+bindRawSocketToInterface(iface, raw);
 
 
 if(!sendRawPacket(raw, packet, sizeof(packet)))
@@ -284,11 +295,9 @@ close (raw);
 return (0);
 }
 
-
-int sendTCPpacket(char *device, char *src_ipmac, char *dest_ipmac, char *ipSrc, char *ipDest, int srcPort, int destPort, string dataI)
+int Forger::sendTCPpacket(const char *ipSrc, const char *ipDest, int srcPort, int destPort, const char *src_ipmac, const char *dest_ipmac, const char *device, char *data)
 {
   int raw;
-  unsigned char *data;
   unsigned char *packet;
   struct ethhdr *ethernet_header;
   struct iphdr *ip_header;
@@ -296,15 +305,13 @@ int sendTCPpacket(char *device, char *src_ipmac, char *dest_ipmac, char *ipSrc, 
   int pkt_len;
 
   raw = createRawSocket();
-  bindRawSocketToInterface(device, raw, ETH_P_ALL);
+  bindRawSocketToInterface(device, raw);
 
   ethernet_header = createEthHeader(src_ipmac, dest_ipmac, ETHERTYPE_IP);
-  ip_header = createIPHeader(ipSrc, ipDest, dataI.length());
+  ip_header = createIPHeader(ipSrc, ipDest, sizeof(data));
   tcp_header = createTCPHeader(srcPort, destPort);
 
-  data = (unsigned char *)dataI.c_str();
-
-  createPseudoHeaderAndComputeTcpChecksum(tcp_header, ip_header, data, dataI.length());
+  createPseudoHeaderAndComputeTcpChecksum(tcp_header, ip_header, data, sizeof(data));
 
   pkt_len = sizeof(struct ethhdr) + ntohs(ip_header->tot_len);
 
@@ -313,7 +320,7 @@ int sendTCPpacket(char *device, char *src_ipmac, char *dest_ipmac, char *ipSrc, 
   memcpy(packet, ethernet_header, sizeof(struct ethhdr));
   memcpy((packet + sizeof(struct ethhdr)), ip_header, ip_header->ihl*4);
   memcpy((packet + sizeof(struct ethhdr) + ip_header->ihl*4),tcp_header, tcp_header->doff*4);
-  memcpy((packet + sizeof(struct ethhdr) + ip_header->ihl*4 + tcp_header->doff*4), data, dataI.length());
+  memcpy((packet + sizeof(struct ethhdr) + ip_header->ihl*4 + tcp_header->doff*4), data, sizeof(data));
 
   if(!sendRawPacket(raw, packet, pkt_len))
     perror("Error sending packet");
@@ -321,7 +328,6 @@ int sendTCPpacket(char *device, char *src_ipmac, char *dest_ipmac, char *ipSrc, 
   free(ethernet_header);
   free(ip_header);
   free(tcp_header);
-  free(data);
   free(packet);
 
   close(raw);

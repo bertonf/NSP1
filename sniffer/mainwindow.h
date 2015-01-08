@@ -40,6 +40,8 @@ private slots:
 
     void on_actionOpen_file_triggered();
 
+    void on_forgingButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     QStandardItemModel tv;

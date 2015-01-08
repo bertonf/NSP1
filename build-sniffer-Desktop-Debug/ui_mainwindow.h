@@ -46,6 +46,7 @@ public:
     QLabel *labelInterface;
     QComboBox *comboBoxInterfaces;
     QPushButton *pushButtonStartStop;
+    QPushButton *forgingButton;
     QLabel *label;
     QVBoxLayout *verticalLayout_2;
     QTableWidget *tableWidget;
@@ -54,7 +55,6 @@ public:
     QTextEdit *textEditChar;
     QMenuBar *menuBar;
     QMenu *menuPcap_dump;
-    QMenu *menuForging;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -111,13 +111,18 @@ public:
 
         horizontalLayout->addWidget(pushButtonStartStop);
 
+        forgingButton = new QPushButton(centralWidget);
+        forgingButton->setObjectName(QStringLiteral("forgingButton"));
+
+        horizontalLayout->addWidget(forgingButton);
+
         label = new QLabel(centralWidget);
         label->setObjectName(QStringLiteral("label"));
 
         horizontalLayout->addWidget(label);
 
         horizontalLayout->setStretch(2, 1);
-        horizontalLayout->setStretch(3, 2);
+        horizontalLayout->setStretch(4, 2);
 
         verticalLayout->addLayout(horizontalLayout);
 
@@ -184,11 +189,9 @@ public:
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 958, 20));
+        menuBar->setGeometry(QRect(0, 0, 958, 25));
         menuPcap_dump = new QMenu(menuBar);
         menuPcap_dump->setObjectName(QStringLiteral("menuPcap_dump"));
-        menuForging = new QMenu(menuBar);
-        menuForging->setObjectName(QStringLiteral("menuForging"));
         MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
@@ -198,13 +201,8 @@ public:
         MainWindow->setStatusBar(statusBar);
 
         menuBar->addAction(menuPcap_dump->menuAction());
-        menuBar->addAction(menuForging->menuAction());
         menuPcap_dump->addAction(actionOpen_file);
         menuPcap_dump->addAction(actionSave);
-        menuForging->addAction(actionTCP);
-        menuForging->addAction(actionUDP);
-        menuForging->addAction(actionICMP);
-        menuForging->addAction(actionARP);
 
         retranslateUi(MainWindow);
 
@@ -222,6 +220,7 @@ public:
         actionSave->setText(QApplication::translate("MainWindow", "Save", 0));
         labelInterface->setText(QApplication::translate("MainWindow", "Interfaces :", 0));
         pushButtonStartStop->setText(QApplication::translate("MainWindow", "PushButton", 0));
+        forgingButton->setText(QApplication::translate("MainWindow", "Forging", 0));
         label->setText(QApplication::translate("MainWindow", "<html><head/><body><p><br/></p></body></html>", 0));
         QTableWidgetItem *___qtablewidgetitem = tableWidget->horizontalHeaderItem(0);
         ___qtablewidgetitem->setText(QApplication::translate("MainWindow", "N\302\260", 0));
@@ -234,7 +233,6 @@ public:
         QTableWidgetItem *___qtablewidgetitem4 = tableWidget->horizontalHeaderItem(4);
         ___qtablewidgetitem4->setText(QApplication::translate("MainWindow", "Info", 0));
         menuPcap_dump->setTitle(QApplication::translate("MainWindow", "pcap dump", 0));
-        menuForging->setTitle(QApplication::translate("MainWindow", "Forging", 0));
     } // retranslateUi
 
 };

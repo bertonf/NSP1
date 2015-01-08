@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[13];
-    char stringdata[215];
+    QByteArrayData data[14];
+    char stringdata[240];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -41,7 +41,8 @@ QT_MOC_LITERAL(8, 103, 11),
 QT_MOC_LITERAL(9, 115, 14),
 QT_MOC_LITERAL(10, 130, 30),
 QT_MOC_LITERAL(11, 161, 23),
-QT_MOC_LITERAL(12, 185, 28)
+QT_MOC_LITERAL(12, 185, 28),
+QT_MOC_LITERAL(13, 214, 24)
     },
     "MainWindow\0AddRow\0\0MyPacket*\0"
     "AddRowFromFile\0on_tableWidget_currentCellChanged\0"
@@ -49,6 +50,7 @@ QT_MOC_LITERAL(12, 185, 28)
     "previousColumn\0on_pushButtonStartStop_clicked\0"
     "on_actionSave_triggered\0"
     "on_actionOpen_file_triggered\0"
+    "on_forgingButton_clicked\0"
 };
 #undef QT_MOC_LITERAL
 
@@ -58,7 +60,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -66,17 +68,19 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,   44,    2, 0x0a,
-       4,    1,   47,    2, 0x0a,
-       5,    4,   50,    2, 0x08,
-      10,    0,   59,    2, 0x08,
-      11,    0,   60,    2, 0x08,
-      12,    0,   61,    2, 0x08,
+       1,    1,   49,    2, 0x0a,
+       4,    1,   52,    2, 0x0a,
+       5,    4,   55,    2, 0x08,
+      10,    0,   64,    2, 0x08,
+      11,    0,   65,    2, 0x08,
+      12,    0,   66,    2, 0x08,
+      13,    0,   67,    2, 0x08,
 
  // slots: parameters
     QMetaType::Void, 0x80000000 | 3,    2,
     QMetaType::Void, 0x80000000 | 3,    2,
     QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int, QMetaType::Int,    6,    7,    8,    9,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -95,6 +99,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 3: _t->on_pushButtonStartStop_clicked(); break;
         case 4: _t->on_actionSave_triggered(); break;
         case 5: _t->on_actionOpen_file_triggered(); break;
+        case 6: _t->on_forgingButton_clicked(); break;
         default: ;
         }
     }
@@ -125,13 +130,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 6)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 6;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 6)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 6;
+        _id -= 7;
     }
     return _id;
 }

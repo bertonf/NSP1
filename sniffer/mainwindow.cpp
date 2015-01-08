@@ -17,6 +17,7 @@
 #include "ui_mainwindow.h"
 #include "mypacket.h"
 #include "readPcap.h"
+#include "forging.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -381,4 +382,10 @@ void MainWindow::on_actionOpen_file_triggered()
     //ui->tableWidget->clearContents(); /*BUG*/
     QString file = QFileDialog::getOpenFileName(this, "Open", "/home", "pcap file (*.pcap)");
     _readPcap.run(file.toStdString());
+}
+
+void MainWindow::on_forgingButton_clicked()
+{
+    Forging *forging = new Forging();
+    forging->show();
 }

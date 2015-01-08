@@ -19,8 +19,9 @@ SOURCES += main.cpp \
     internetprotocol.cpp \
     mainwindow.cpp \
     mypacket.cpp \
-    forger.cpp \
-    readPcap.cpp
+    readPcap.cpp \
+    forging.cpp \
+    forger.cpp
 
 HEADERS  += \
     capture.h \
@@ -29,11 +30,13 @@ HEADERS  += \
     internetprotocol.h \
     mainwindow.h \
     mypacket.h \
-    forger.h \
-    readPcap.h
+    readPcap.h \
+    forging.h \
+    forger.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    forging.ui
 
 OTHER_FILES += \
     sniffer.pro.user
@@ -43,4 +46,3 @@ unix:!macx: LIBS += -L$$PWD/../../../../usr/local/lib/ -lpcap
 INCLUDEPATH += $$PWD/../../../../usr/local/include
 DEPENDPATH += $$PWD/../../../../usr/local/include
 
-unix:!macx: PRE_TARGETDEPS += $$PWD/../../../../usr/local/lib/libpcap.a

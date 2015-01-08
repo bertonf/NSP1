@@ -24,7 +24,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_5"/>
+      <widget class="QLineEdit" name="operationEdit"/>
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
@@ -38,6 +38,15 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QComboBox" name="intComboBox">
+       <item>
+        <property name="text">
+         <string>wlan0</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item>
       <widget class="QComboBox" name="comboBox">
@@ -65,7 +74,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_3"/>
+      <widget class="QLineEdit" name="srcIpEdit"/>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -75,7 +84,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit"/>
+      <widget class="QLineEdit" name="destIpEdit"/>
      </item>
     </layout>
    </item>
@@ -89,7 +98,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_2"/>
+      <widget class="QLineEdit" name="srcPortEdit"/>
      </item>
      <item>
       <widget class="QLabel" name="label_4">
@@ -99,7 +108,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_4"/>
+      <widget class="QLineEdit" name="destPortEdit"/>
      </item>
     </layout>
    </item>
@@ -113,7 +122,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_6"/>
+      <widget class="QLineEdit" name="srcAddrMacEdit"/>
      </item>
      <item>
       <widget class="QLabel" name="label_7">
@@ -123,12 +132,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lineEdit_7"/>
+      <widget class="QLineEdit" name="destAddrMacEdit"/>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="plainTextEdit"/>
+    <widget class="QTextEdit" name="dataTextEdit"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -146,14 +155,14 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="cancelButton">
        <property name="text">
         <string>Cancel</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="sendButton">
        <property name="text">
         <string>Send</string>
        </property>
