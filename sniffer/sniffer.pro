@@ -19,12 +19,8 @@ SOURCES += main.cpp \
     internetprotocol.cpp \
     mainwindow.cpp \
     mypacket.cpp \
-<<<<<<< HEAD
+    forger.cpp \
     readPcap.cpp
-=======
-    ethernetprotocol.cpp \
-    forger.cpp
->>>>>>> 4a05d04864153d503682191d2b2b3e3b9d16f297
 
 HEADERS  += \
     capture.h \
@@ -33,7 +29,7 @@ HEADERS  += \
     internetprotocol.h \
     mainwindow.h \
     mypacket.h \
-<<<<<<< HEAD
+    forger.h \
     readPcap.h
 
 FORMS += \
